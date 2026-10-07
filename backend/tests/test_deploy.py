@@ -290,7 +290,7 @@ def test_render_yaml_defaults():
     assert re.search(r"healthCheckPath:\s*/api/health", text)
     pairs = dict(re.findall(r"-\s*key:\s*(\w+)\s*\n\s*value:\s*\"?([^\"\n]+)\"?", text))
     assert pairs == {
-        "ROADIE_LIVE": "1",
+        "ROADIE_LIVE": "0",  # the free instance is too slow for the qloo harness (docs/DEPLOY.md, Known limits)
         "ROADIE_LIVE_UNTIL": "2026-11-16",
         "ROADIE_GLOBAL_SEARCHES_PER_DAY": "50",
         "ROADIE_TRUST_PROXY": "1",

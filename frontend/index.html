@@ -206,7 +206,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
     <section class="block" aria-labelledby="live-h">
       <div class="panel extra">
         <h2 id="live-h">Live search <span class="tag">extra</span></h2>
-        <p class="lede">Optional extra: look up any comedian live. It is slower and limited: a reduced set of 6 cities, template-written text and no comic identification. It may be switched off or out of budget; the gallery above always works.</p>
+        <p id="live-lede" class="lede">Optional extra: look up any comedian live. It is slower and limited: a reduced set of 6 cities, template-written text and no comic identification. It may be switched off or out of budget; the gallery above always works.</p>
         <p id="live-status" class="meta" role="status"></p>
         <form id="live-form" novalidate>
           <div class="row">
@@ -915,7 +915,12 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
   function liveStatusLine(health) {
     var el = $('live-status');
     if (!health.live_enabled) {
-      el.textContent = 'Live search is currently off or has ended on this server.';
+      // Expected state on the hosted demo, not an error: calm notice, no form, no Problem label.
+      $('live-form').hidden = true;
+      el.textContent = '';
+      var lede = $('live-lede');
+      lede.className = 'notice';
+      lede.textContent = 'Live search is switched off on this demo server because the free host does not have enough CPU for it. The pre-built plans above are the demo.';
     } else {
       var left = typeof health.live_budget_remaining === 'number' ? ' Live runs left in the current budget: ' + health.live_budget_remaining + '.' : '';
       el.textContent = 'A live run takes about one to two minutes, and steps appear as they finish.' + left;
@@ -950,7 +955,8 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
   if (window.__ROADIE_TEST__) {
     window.__ROADIE_TEST__.exports = {
       tierSummary: tierSummary, needsTierBadge: needsTierBadge, galleryComicsText: galleryComicsText,
-      cityPreview: cityPreview, cleanCopy: cleanCopy, renderPlan: renderPlan, galleryCard: galleryCard
+      cityPreview: cityPreview, cleanCopy: cleanCopy, renderPlan: renderPlan, galleryCard: galleryCard,
+      liveStatusLine: liveStatusLine
     };
   } else {
     boot();

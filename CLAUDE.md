@@ -87,7 +87,7 @@ If the app would work the same without Qloo, it is wrong.
   prints counts only (and tells apart a missing, empty and unreadable secrets folder; unreadable means it exists but this user cannot list it, and the app still starts), exports QLOO_BASE_URL and QLOO_TRUSTED_BASE_URL (default the hackathon URL), runs
   `qloo config set base-url` without the key in its environment, then starts uvicorn. The key comes only from the
   QLOO_API_KEY environment variable. /api/health also returns gallery_count (0 = secret files not found; the page
-  then says the gallery is unavailable). The free instance is ephemeral: live_budget.json and the cache reset on restart.
+  then says the gallery is unavailable). The free instance is ephemeral: live_budget.json and the cache reset on restart. The hosted demo runs with ROADIE_LIVE=0 (render.yaml); the gallery is the demo (see Known limits).
 
 ## API (backend/roadie/api.py, live.py, settings.py)
 - create_app(settings, client_factory, clock, now, pacer) so tests inject everything. Settings.from_env reads only
@@ -114,6 +114,16 @@ If the app would work the same without Qloo, it is wrong.
   is the direct peer unless ROADIE_TRUST_PROXY: then the X-Forwarded-For entry ROADIE_TRUSTED_PROXY_HOPS (default 1) places from the RIGHT end (a trusted proxy appends the address it saw; left-hand entries are client-supplied and never used); a header shorter than the hop count or a malformed entry falls back to the direct peer. The hop count is unverified for Render (see docs/DEPLOY.md).
 - Errors are fixed codes with fixed messages. Never put an exception message, a subprocess command line,
   raw Qloo output, a key or an environment value in a response or a log line. Qloo text is length-capped.
+
+## Known limits
+- (a) A full live run took 133 s with serial calls in a container limited to 0.5 CPU and 512 MB.
+- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 s even alone, apparently mostly Node
+  start-up (a lone search took as long as a lone where_popular), longer than the client's 30 s per-call timeout; a live
+  plan there hit the 20-call cap and stopped with a clean message, while live search (one call) did work.
+- (c) So the hosted demo runs with ROADIE_LIVE=0 and the gallery is the demo; live mode works on a host with enough CPU
+  and is unproven below 0.5 CPU. When /api/health says live_enabled is false the page hides the form and shows a calm notice.
+- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
+- Possible future fix, not yet implemented and untested: one long-running harness process (qloo mcp) so Node starts once.
 
 ## Dropped sections
 The plan has no vibe, shared-audience or trends section. They were cut because entity_tags and

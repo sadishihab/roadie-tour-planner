@@ -26,7 +26,9 @@ def test_readme_has_the_expected_sections_and_placeholders():
     for heading in ("## What it does", "## Why it needs Qloo", "## What we learned from the data",
                     "## Responsible by design", "## Run it", "## Data handling", "## Repository map", "## License"):
         assert heading in README, heading
-    assert "DEMO_URL_PLACEHOLDER" in README  # replaced with the live URL after deployment
+    assert "DEMO_URL_PLACEHOLDER" not in README
+    assert "https://roadie-tour-planner.onrender.com" in README
+    assert "Live search is switched off" in README and "docs/DEPLOY.md#known-limits" in README
     assert "SCREENSHOTS_PLACEHOLDER" not in README  # the screenshots are in
     assert "## Screenshots" in README and "invented synthetic data" in README
     for name in ("01-gallery.png", "02-plan.png", "03-city.png"):

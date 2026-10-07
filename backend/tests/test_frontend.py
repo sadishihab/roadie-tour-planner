@@ -441,3 +441,36 @@ def test_buttons_and_city_rows_are_at_least_44px_tall_on_narrow_screens(narrow_r
         assert min(row["homeButtons"]) >= 44
         for name, m in row["plans"].items():
             assert min(m["small"]["buttons"]) >= 44 and min(m["small"]["cityRows"]) >= 44, (row["width"], name, m["small"])
+
+
+# ---- milestone 18: the page and docs tell the truth about live mode on the hosted demo -----------------------
+
+CALM = ("Live search is switched off on this demo server because the free host does not have enough CPU for it. "
+        "The pre-built plans above are the demo.")
+
+
+def test_calm_sentence_is_in_the_page_and_uses_the_notice_style_not_the_problem_label():
+    start = SCRIPT.index("function liveStatusLine")
+    body = SCRIPT[start : SCRIPT.index("function start(", start)]
+    assert CALM in body
+    assert "problem(" not in body and "'problem'" not in body
+
+
+def test_live_disabled_hides_the_form_and_shows_the_calm_notice(tmp_path):
+    out = run_harness(tmp_path, {"healths": [
+        {"status": "ok", "live_enabled": False, "live_budget_remaining": None, "gallery_count": 5},
+        {"status": "ok", "live_enabled": True, "live_budget_remaining": 7, "gallery_count": 5},
+    ]})
+    off, on = out["live"]
+    assert off["formHidden"] is True and off["ledeText"] == CALM and off["ledeClass"] == "notice"
+    assert off["status"] == ""
+    assert on["formHidden"] is False and on["ledeText"] is None and on["ledeClass"] is None
+    assert "Live runs left in the current budget: 7." in on["status"]
+
+
+def test_docs_state_the_known_limits():
+    for rel in ("docs/DEPLOY.md", "docs/API.md", "docs/ARCHITECTURE.md", "CLAUDE.md"):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        assert "Known limits" in text, rel
+        for fact in ("133", "47 seconds" if rel.startswith("docs") else "47 s", "ROADIE_LIVE=0", "Nov 16"):
+            assert fact in text, (rel, fact)

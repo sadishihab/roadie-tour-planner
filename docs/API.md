@@ -71,7 +71,24 @@ that the gallery is still available, `/api/health` reports `live_enabled: false`
 the gallery keeps working. If Qloo stops answering earlier, searches and runs fail with the code `qloo_unavailable`,
 never a stack trace.
 
+## Hosted demo
+Live mode is off on the hosted demo (`ROADIE_LIVE=0`), so its live endpoints answer `503 {"error": "live_disabled"}` and
+the page hides the search form. See Known limits below.
+
 ## Measured run time
 A full live plan ran against the hackathon server inside the Docker image (limited to 0.5 CPU and 512 MB) and took 133
 seconds with the calls run serially. The concurrent worker pool was added afterwards; its effect on a small CPU has not
 been measured.
+
+## Known limits
+Measured facts about live mode, stated as measured:
+- (a) A full live run took 133 seconds with serial calls in a container limited to 0.5 CPU and 512 MB.
+- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 seconds even when run alone,
+  apparently mostly Node start-up (a lone search took as long as a lone where_popular). That is longer than the client's
+  30 second per-call timeout. A live plan there hit the 20-call safety cap and stopped with a clean message; live search
+  (one call) did work.
+- (c) Therefore the hosted demo runs with `ROADIE_LIVE=0` and the gallery is the demo. Live mode works on a host with
+  enough CPU and is unproven below 0.5 CPU.
+- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
+
+A possible future fix, not yet implemented and untested: keep one long-running harness process (`qloo mcp`) so Node starts once.

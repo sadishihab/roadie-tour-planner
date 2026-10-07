@@ -2,12 +2,12 @@
 
 An AI tour planner for touring stand-up comedians: give it a comedian's name and it returns a plan grounded in Qloo's audience data, with cities, a route, venues, comics to bill with and brands. Built for the Qloo Agentic Hackathon.
 
-**Live demo:** DEMO_URL_PLACEHOLDER
+**Live demo:** https://roadie-tour-planner.onrender.com
 
-The live search on that page is an optional extra. It ends when the hackathon key is deactivated on Nov 16; the pre-built gallery of plans keeps working after that.
+The hosted demo shows the five pre-built plans. Live search is switched off there because the free host is too slow for it; see [docs/DEPLOY.md](docs/DEPLOY.md#known-limits) for why. Live mode is still in the code and works on a host with enough CPU, and it ends anyway when the hackathon key is deactivated on Nov 16.
 
 ## Screenshots
-These screenshots use invented synthetic data; the live demo shows real Qloo-based plans.
+These screenshots use invented synthetic data; the hosted demo shows the pre-built plans, which are based on real Qloo data.
 
 ![The gallery of pre-built plans](docs/images/01-gallery.png)
 ![A plan: summary, how to read it, and the suggested route](docs/images/02-plan.png)
@@ -52,7 +52,7 @@ Tests (synthetic data only, no network):
 ```
 cd backend && python -m pytest
 ```
-Live search is off unless `ROADIE_LIVE=1` and the `qloo` CLI is set up with a key; see [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
+Live search is off unless `ROADIE_LIVE=1` and the `qloo` CLI is set up with a key; it is off on the hosted demo ([docs/DEPLOY.md](docs/DEPLOY.md#known-limits)). See [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Data handling
 Qloo's organizers do not allow Qloo response data in a public repository, so this repository contains code and synthetic test data only. Real responses and the gallery built from them live in a private folder (`ROADIE_DATA_DIR`) outside version control, and tests use invented comedians, venues, brands and ids. Details and the guard tests are in [docs/DATA.md](docs/DATA.md).

@@ -76,9 +76,22 @@ One static file: inline CSS and JavaScript, no framework, no build, same-origin 
   buttons.
 - "Qloo result" marks only what Qloo returned; peer, bigger act and smaller act use the dashed "Roadie reading" style.
   Internal field names are never shown.
-- The optional live search streams steps over EventSource and shows the same plan view with template narration. A
+- The optional live search streams steps over EventSource and shows the same plan view with template narration. When `/api/health` says `live_enabled` is false (the case on the hosted demo), the page hides the form and shows one calm notice instead (not the Problem label). A
   sleeping host gets a "Waking the server" notice after 4 s and `/api/health` is retried for up to 90 s.
 - Every API string is inserted with `textContent` or text nodes, never `innerHTML` (a test scans for it); attributes are
   never built from API strings. Colors and fonts are CSS variables at the top.
 - Tests: `frontend_harness.js` renders the page script against a tiny fake DOM with node (skipped without node), and a
   headless Chromium test (skipped without it) checks 360 and 390 px widths for sideways scroll and 44 px touch targets.
+
+## Known limits
+Measured facts about live mode, stated as measured:
+- (a) A full live run took 133 seconds with serial calls in a container limited to 0.5 CPU and 512 MB.
+- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 seconds even when run alone,
+  apparently mostly Node start-up (a lone search took as long as a lone where_popular). That is longer than the client's
+  30 second per-call timeout. A live plan there hit the 20-call safety cap and stopped with a clean message; live search
+  (one call) did work.
+- (c) Therefore the hosted demo runs with `ROADIE_LIVE=0` and the gallery is the demo. Live mode works on a host with
+  enough CPU and is unproven below 0.5 CPU.
+- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
+
+A possible future fix, not yet implemented and untested: keep one long-running harness process (`qloo mcp`) so Node starts once.

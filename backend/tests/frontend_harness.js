@@ -20,10 +20,11 @@ Object.defineProperty(El.prototype, 'textContent', {
   get() { return this.children.map((c) => (c.nodeType === 3 ? c.data : c.textContent)).join(''); },
   set(v) { this.children = [new Text(String(v))]; },
 });
+const byId = {};
 const doc = {
   createElement: (t) => new El(t),
   createTextNode: (t) => new Text(String(t)),
-  getElementById: () => new El('div'),
+  getElementById: (id) => (byId[id] = byId[id] || new El('div')),
   activeElement: null,
 };
 const win = { __ROADIE_TEST__: {}, scrollTo() {} };
@@ -55,5 +56,12 @@ out.clicks = (input.entries || []).map((e) => {
   const before = details.map((d) => d.open);
   if (buttons.length) buttons[buttons.length - 1].click();
   return { buttons: buttons.length, before, after: details.map((d) => d.open), scrolled: details.map((d) => !!d.scrolled) };
+});
+// live status line: hidden form + calm notice when live is off, form untouched when it is on
+out.live = (input.healths || []).map((hl) => {
+  Object.keys(byId).forEach((k) => delete byId[k]);
+  api.liveStatusLine(hl);
+  const f = byId['live-form'], l = byId['live-lede'], s = byId['live-status'];
+  return { formHidden: !!(f && f.hidden), ledeClass: l ? l.className : null, ledeText: l ? l.textContent : null, status: s ? s.textContent : null };
 });
 process.stdout.write(JSON.stringify(out));

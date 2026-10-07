@@ -9,6 +9,9 @@ server"), and the filesystem is ephemeral. Consequences: the gallery files are c
 and the live monthly counter (`live_budget.json`) and the 24 hour cache reset when the instance restarts. The
 per-day, per-hour and per-run limits still bound spend, and the Qloo key itself is capped by the organizers.
 
+**The hosted demo runs with live mode off** (`ROADIE_LIVE=0`): the free instance is too slow for the `qloo` harness, so
+the five pre-built gallery plans are the demo. See [Known limits](#known-limits).
+
 ## Render steps
 
 1. In the Render dashboard choose **New > Web Service** and connect the public Roadie repository (or **New > Blueprint**
@@ -19,7 +22,7 @@ per-day, per-hour and per-run limits still bound spend, and the Qloo key itself 
    | Variable | Value |
    |---|---|
    | `QLOO_API_KEY` | your hackathon key, typed into the dashboard only (the blueprint declares it with `sync: false`) |
-   | `ROADIE_LIVE` | `1` |
+   | `ROADIE_LIVE` | `0` on the free instance (see Known limits); `1` only on a host with enough CPU |
    | `ROADIE_LIVE_UNTIL` | `2026-11-16` |
    | `ROADIE_GLOBAL_SEARCHES_PER_DAY` | `50` |
    | `ROADIE_TRUST_PROXY` | `1` (Render puts a proxy in front) |
@@ -32,8 +35,8 @@ per-day, per-hour and per-run limits still bound spend, and the Qloo key itself 
    these files. Assumption: for Docker services Render exposes Secret Files under `/etc/secrets/`. The container reads
    that folder by default; if your service shows them elsewhere set `ROADIE_SECRETS_DIR` to that path.
 5. Deploy. The log shows one line: `roadie: gallery files copied: N` (a count, never file names).
-6. Check `https://<your-service>.onrender.com/api/health`. Expect `status: ok`, `live_enabled: true`,
-   a number for `live_budget_remaining` and `gallery_count: 5`. `gallery_count: 0` means the Secret Files were not found
+6. Check `https://<your-service>.onrender.com/api/health`. Expect `status: ok`, `live_enabled: false`,
+   `live_budget_remaining: null` and `gallery_count: 5` (with `ROADIE_LIVE=1` on a capable host: `live_enabled: true` and a number). `gallery_count: 0` means the Secret Files were not found
    (the page then says the gallery is unavailable; nothing crashes). Then open `/` and the gallery.
 
 The key is read from `QLOO_API_KEY` at run time only. It is never written to disk by the entrypoint, never printed and
@@ -73,6 +76,19 @@ secrets folder it starts anyway; the gallery is then empty and the page says it 
 
 Assumption: Render exposes Secret Files to Docker services under `/etc/secrets/` (hence the default; override with
 `ROADIE_SECRETS_DIR`).
+
+## Known limits
+Measured facts about live mode, stated as measured:
+- (a) A full live run took 133 seconds with serial calls in a container limited to 0.5 CPU and 512 MB.
+- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 seconds even when run alone,
+  apparently mostly Node start-up (a lone search took as long as a lone where_popular). That is longer than the client's
+  30 second per-call timeout. A live plan there hit the 20-call safety cap and stopped with a clean message; live search
+  (one call) did work.
+- (c) Therefore the hosted demo runs with `ROADIE_LIVE=0` and the gallery is the demo. Live mode works on a host with
+  enough CPU and is unproven below 0.5 CPU.
+- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
+
+A possible future fix, not yet implemented and untested: keep one long-running harness process (`qloo mcp`) so Node starts once.
 
 ## What was verified
 - The image was built and run locally with a 0.5 CPU and 512 MB limit. A real live search and a full live plan ran
