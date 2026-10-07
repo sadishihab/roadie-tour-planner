@@ -474,3 +474,29 @@ def test_docs_state_the_known_limits():
         assert "Known limits" in text, rel
         for fact in ("133", "47 seconds" if rel.startswith("docs") else "47 s", "ROADIE_LIVE=0", "Nov 16"):
             assert fact in text, (rel, fact)
+
+
+# ---- milestone 19: live warming up --------------------------------------------------------------------------
+
+WARMING = "Live search is warming up, this can take about a minute."
+
+
+def test_live_warming_up_shows_the_message_and_disables_the_form_until_ready(tmp_path):
+    out = run_harness(tmp_path, {"healths": [
+        {"status": "ok", "live_enabled": True, "live_ready": False, "live_status": "starting", "live_budget_remaining": 7, "gallery_count": 5},
+        {"status": "ok", "live_enabled": True, "live_ready": True, "live_status": "ready", "live_budget_remaining": 7, "gallery_count": 5},
+        {"status": "ok", "live_enabled": True, "live_ready": False, "live_status": "unavailable", "live_budget_remaining": 7, "gallery_count": 5},
+    ]})
+    warming, ready, gone = out["live"]
+    assert warming["status"] == WARMING and warming["formHidden"] is False and warming["inputsDisabled"] is True
+    assert ready["inputsDisabled"] is False and "Live runs left" in ready["status"]
+    assert gone["formHidden"] is True and gone["ledeClass"] == "notice" and "not available right now" in gone["ledeText"]
+
+
+def test_page_polls_health_for_three_minutes_then_gives_up_kindly():
+    assert "LIVE_WARM_GIVE_UP_MS = 180000" in SCRIPT
+    assert "Live search is warming up, this can take about a minute" in SCRIPT
+    start = SCRIPT.index("function watchLive")
+    body = SCRIPT[start : SCRIPT.index("function start(", start)]
+    assert "getJSON('health'" in body and "LIVE_WARM_GAVE_UP" in body
+    assert "live_starting" in SCRIPT[: SCRIPT.index("GENERIC_ERROR")]  # a fixed sentence for the 503 code

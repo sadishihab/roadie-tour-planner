@@ -14,7 +14,10 @@ services:
         sync: false
       # Live mode is off on the free instance: a single qloo call took about 47 s there (0.1 CPU,
       # mostly Node start-up), longer than the 30 s per-call timeout. The gallery is the demo.
-      # See docs/DEPLOY.md, Known limits. Set "1" only on a host with enough CPU.
+      # See docs/DEPLOY.md, Known limits. Set "1" only on a host with enough CPU, or on this one only
+      # after the persistent mode (ROADIE_QLOO_MODE, default persistent: one long-running `qloo mcp`
+      # process) has been shown to finish a full live plan on the free instance in about two minutes.
+      # Until then it stays "0".
       - key: ROADIE_LIVE
         value: "0"
       - key: ROADIE_LIVE_UNTIL

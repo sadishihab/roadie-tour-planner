@@ -89,9 +89,30 @@ If the app would work the same without Qloo, it is wrong.
   QLOO_API_KEY environment variable. /api/health also returns gallery_count (0 = secret files not found; the page
   then says the gallery is unavailable). The free instance is ephemeral: live_budget.json and the cache reset on restart. The hosted demo runs with ROADIE_LIVE=0 (render.yaml); the gallery is the demo (see Known limits).
 
+## Persistent harness (backend/roadie/mcp_client.py)
+- PersistentHarness owns ONE `qloo mcp` child (usual environment: QLOO_API_KEY, QLOO_BASE_URL, QLOO_TRUSTED_BASE_URL; stderr discarded). Messages
+  are one JSON object per line. Order: `initialize` (protocolVersion 2024-11-05, wait for the same id, 120 s allowed, about 40 s on a slow host), the
+  `notifications/initialized` notification, then `tools/list` (10 tools, needs qloo_where_popular and qloo_recommend). Calls are `tools/call`; the
+  result's content[].text holds a JSON document; result.isError true is a fixed code (harness_tool_error), never the raw message. Tools:
+  qloo_where_popular (entity, within); qloo_recommend (signals = ARRAY of entity ids, target_type person|place|brand, filter_location,
+  include_tags, limit); qloo_find_tags (tags only).
+- Lock around writes, reader thread matching responses to ids, in-flight limit 1 (serialized; matching by id still handles out-of-order answers),
+  call timeout 60 s, start-up 120 s, a timeout is retried once through the budget hook (charged to the 20-call cap and the 4/s pacer), two timeouts
+  in a row restart the child. A supervisor restarts a dead or wedged child at most 3 times (backoff 1, 2, 4 s; a good answer resets the count), then status
+  `unavailable`. It never raises into the server and never touches the gallery.
+- McpClient maps documents to the one-off client's shapes (where_popular: operation, status, interpretation.within = the requested city, results
+  cells with query.affinity and query.popularity; entities: name, entity_id, popularity, query.affinity; people never keep tags). A document missing a
+  needed number fails the call (harness_bad_response); nothing is guessed. The exact key path of affinity in real MCP documents is not verified
+  (the code reads query.affinity, and a flat `affinity`). search_person stays on the one-off LiveClient (90 s timeout, no retry) because no
+  person-search tool is verified in tools/list.
+- Settings: ROADIE_QLOO_MODE = persistent (default) or oneshot (old LiveClient per call). /api/health adds live_ready and live_status
+  (ready, starting, unavailable). While starting, search and plan answer 503 {error: live_starting}; after giving up 503 {error: qloo_unavailable};
+  streams of running jobs are not gated. The page shows "Live search is warming up, this can take about a minute" and polls /api/health up to 3 minutes.
+- Tests use a scripted fake child (backend/tests/fake_mcp.py): no process, no network.
+
 ## API (backend/roadie/api.py, live.py, settings.py)
 - create_app(settings, client_factory, clock, now, pacer) so tests inject everything. Settings.from_env reads only
-  ROADIE_DATA_DIR, ROADIE_LIVE, ROADIE_ALLOWED_ORIGINS, ROADIE_TRUST_PROXY, ROADIE_TRUSTED_PROXY_HOPS, ROADIE_LIVE_WORKERS, ROADIE_LIVE_UNTIL and the limit
+  ROADIE_DATA_DIR, ROADIE_LIVE, ROADIE_QLOO_MODE, ROADIE_ALLOWED_ORIGINS, ROADIE_TRUST_PROXY, ROADIE_TRUSTED_PROXY_HOPS, ROADIE_LIVE_WORKERS, ROADIE_LIVE_UNTIL and the limit
   variables (see README). Never read, log or return any other environment value. ROADIE_GALLERY_DIR is gone.
 - Gallery: scripts/build_gallery.py writes <ROADIE_DATA_DIR>/gallery/<slug>.json (plan + narration + built_with). The owner
   builds the openai versions locally; the script refuses to replace an openai file with a template one
@@ -123,7 +144,10 @@ If the app would work the same without Qloo, it is wrong.
 - (c) So the hosted demo runs with ROADIE_LIVE=0 and the gallery is the demo; live mode works on a host with enough CPU
   and is unproven below 0.5 CPU. When /api/health says live_enabled is false the page hides the form and shows a calm notice.
 - (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
-- Possible future fix, not yet implemented and untested: one long-running harness process (qloo mcp) so Node starts once.
+- (e) Persistent mode (ROADIE_QLOO_MODE=persistent, the default when live is on) keeps ONE `qloo mcp` process so Node starts once. Measured
+  with a probe at 0.1 CPU: about 42 s to start once, then 0.6 to 4 s per call. NOT verified: a full live plan through the persistent
+  harness, and behavior after a harness crash on a real host. Stopping rule: if a full live plan does not finish in about two minutes
+  on Render's free instance, live mode stays off (ROADIE_LIVE=0).
 
 ## Dropped sections
 The plan has no vibe, shared-audience or trends section. They were cut because entity_tags and

@@ -52,7 +52,7 @@ Tests (synthetic data only, no network):
 ```
 cd backend && python -m pytest
 ```
-Live search is off unless `ROADIE_LIVE=1` and the `qloo` CLI is set up with a key; it is off on the hosted demo ([docs/DEPLOY.md](docs/DEPLOY.md#known-limits)). See [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
+Live search is off unless `ROADIE_LIVE=1` and the `qloo` CLI is set up with a key; it is off on the hosted demo ([docs/DEPLOY.md](docs/DEPLOY.md#known-limits)). When on, it uses one long-running `qloo mcp` process by default (`ROADIE_QLOO_MODE=persistent`; `oneshot` is the old per-call behavior), so the first minute after start-up answers "warming up"; the persistent mode is measured at 0.1 CPU with a probe but a full live plan through it is not yet verified, and person search by name still uses a one-off call. See [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Data handling
 Qloo's organizers do not allow Qloo response data in a public repository, so this repository contains code and synthetic test data only. Real responses and the gallery built from them live in a private folder (`ROADIE_DATA_DIR`) outside version control, and tests use invented comedians, venues, brands and ids. Details and the guard tests are in [docs/DATA.md](docs/DATA.md).

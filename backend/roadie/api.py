@@ -13,6 +13,7 @@ import json
 import logging
 import shutil
 import time
+from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
@@ -26,6 +27,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.concurrency import run_in_threadpool
 
 from .live import JOB_ID_RE, MESSAGES, ClientFactory, LiveError, LiveService, RatePacer, client_ip
+from .mcp_client import PersistentHarness
 from .paths import SLUG_RE
 from .settings import Settings
 
@@ -120,9 +122,10 @@ def create_app(
     clock: Callable[[], float] = time.monotonic,
     now: Callable[[], datetime] | None = None,
     pacer: RatePacer | None = None,
+    harness: PersistentHarness | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
-    service = LiveService(settings, client_factory, clock, now, pacer)
+    service = LiveService(settings, client_factory, clock, now, pacer, harness)
     qloo_found = shutil.which(settings.qloo_bin) is not None
     # With a client_factory injected (tests), the CLI check is the factory's business.
     live_configured = settings.live and (qloo_found or client_factory is not None)
@@ -130,7 +133,15 @@ def create_app(
     def live_enabled() -> bool:
         return live_configured and not service.ended()
 
-    app = FastAPI(title="Roadie", docs_url=None, redoc_url=None, openapi_url=None)
+    @asynccontextmanager
+    async def lifespan(_: FastAPI) -> Any:
+        if live_enabled():
+            service.warm_up()  # background thread: the page and the gallery are served while it boots
+        yield
+        if service.harness is not None:
+            service.harness.stop()
+
+    app = FastAPI(title="Roadie", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.live_service = service
     app.add_middleware(SecurityHeaders)
     if settings.allowed_origins:
@@ -162,6 +173,16 @@ def create_app(
         # Configured but past ROADIE_LIVE_UNTIL: the hackathon key is gone, say so instead of "disabled".
         return error_response(503, "live_ended" if live_configured else "live_disabled")
 
+    def live_not_ready() -> JSONResponse | None:
+        """For search and plan only (a stream of a job already running must keep flowing)."""
+        service.warm_up()  # idempotent; covers a server that was started without the lifespan hook
+        state = service.readiness()
+        if state == "starting":
+            return error_response(503, "live_starting", retry_after=15)
+        if state == "unavailable":
+            return error_response(503, "qloo_unavailable")
+        return None
+
     def ip_of(request: Request) -> str:
         return client_ip(request.client.host if request.client else None, request.headers.get("x-forwarded-for"), settings.trust_proxy, settings.trusted_proxy_hops)
 
@@ -187,11 +208,18 @@ def create_app(
     @app.get("/api/health")
     def health() -> dict[str, Any]:
         on = live_enabled()
+        if on:
+            service.warm_up()
+        status = service.readiness() if on else None
+        # live_ready: true once the persistent harness finished initialize (always true in oneshot mode when live is on)
+        # live_status: ready, starting or unavailable when live is on, else null
         # live_budget_remaining: live plan runs still allowed (smaller of today's and this month's); null when live is off
         # gallery_count: how many gallery files are on disk (0 means the secret files were not found)
         return {
             "status": "ok",
             "live_enabled": on,
+            "live_ready": status == "ready",
+            "live_status": status,
             "live_budget_remaining": service.budget_remaining() if on else None,
             "gallery_count": len(_gallery_files(settings.gallery_dir)),
         }
@@ -219,7 +247,7 @@ def create_app(
 
     @app.post("/api/live/search")
     async def live_search(request: Request) -> Any:
-        if (off := live_off()) is not None:
+        if (off := live_off() or live_not_ready()) is not None:
             return off
         body = await read_body(request, SearchBody)
         if isinstance(body, JSONResponse):
@@ -231,7 +259,7 @@ def create_app(
 
     @app.post("/api/live/plan", status_code=202)
     async def live_plan(request: Request) -> Any:
-        if (off := live_off()) is not None:
+        if (off := live_off() or live_not_ready()) is not None:
             return off
         body = await read_body(request, PlanBody)
         if isinstance(body, JSONResponse):

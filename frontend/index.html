@@ -256,10 +256,15 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
   var RELATIONS = { 'peer': 'peer', 'bigger act': 'bigger act', 'smaller act': 'smaller act' };
   var WAKE_AFTER_MS = 4000;
   var WAKE_GIVE_UP_MS = 90000;
+  var LIVE_WARM_GIVE_UP_MS = 180000; // the live harness can take about a minute to start; give it up to 3 minutes
+  var LIVE_WARM_POLL_MS = 5000;
+  var LIVE_WARMING = 'Live search is warming up, this can take about a minute.';
+  var LIVE_WARM_GAVE_UP = 'Live search is still warming up. Please try again in a few minutes. The demo gallery is still available.';
 
   // Fixed sentences for every error code. The server's own text is never shown.
   var ERRORS = {
     live_disabled: 'Live search is switched off on this server. The demo gallery is still available.',
+    live_starting: 'Live search is warming up, this can take about a minute. Please try again shortly.',
     live_ended: 'Live search has ended: the Qloo access key used for the hackathon is no longer active. The demo gallery is still available.',
     daily_limit: 'The live budget for today has been used up. Try again tomorrow. The demo gallery is still available.',
     monthly_limit: 'The live budget for this month has been used up. The demo gallery is still available.',
@@ -912,6 +917,11 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
   }
 
   // ---- start up -----------------------------------------------------------------------------------------
+  function liveForm(on) {
+    $('live-go').disabled = !on;
+    $('live-name').disabled = !on;
+  }
+
   function liveStatusLine(health) {
     var el = $('live-status');
     if (!health.live_enabled) {
@@ -921,10 +931,40 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
       var lede = $('live-lede');
       lede.className = 'notice';
       lede.textContent = 'Live search is switched off on this demo server because the free host does not have enough CPU for it. The pre-built plans above are the demo.';
+    } else if (health.live_ready === false && health.live_status === 'unavailable') {
+      // The Qloo process could not be started or kept alive: calm notice, the gallery keeps working.
+      $('live-form').hidden = true;
+      el.textContent = '';
+      var gone = $('live-lede');
+      gone.className = 'notice';
+      gone.textContent = 'Live search is not available right now: the Qloo connection could not be started. The pre-built plans above are the demo.';
+    } else if (health.live_ready === false) {
+      liveForm(false);
+      el.textContent = LIVE_WARMING;
     } else {
+      liveForm(true);
       var left = typeof health.live_budget_remaining === 'number' ? ' Live runs left in the current budget: ' + health.live_budget_remaining + '.' : '';
       el.textContent = 'A live run takes about one to two minutes, and steps appear as they finish.' + left;
     }
+  }
+
+  // While the live harness starts, ask /api/health again every few seconds, for up to 3 minutes.
+  function watchLive(health) {
+    if (!health.live_enabled || health.live_ready !== false || health.live_status !== 'starting') { return; }
+    var started = Date.now();
+    function again() {
+      if (Date.now() - started + LIVE_WARM_POLL_MS >= LIVE_WARM_GIVE_UP_MS) { $('live-status').textContent = LIVE_WARM_GAVE_UP; return; }
+      setTimeout(poll, LIVE_WARM_POLL_MS);
+    }
+    function poll() {
+      getJSON('health', 15000).then(function (res) {
+        if (res.ok && res.body && res.body.status === 'ok') {
+          liveStatusLine(res.body);
+          if (res.body.live_enabled && res.body.live_ready === false && res.body.live_status === 'starting') { again(); }
+        } else { again(); }
+      }, again);
+    }
+    again();
   }
 
   function start(failText) {
@@ -932,6 +972,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
     box.textContent = 'Loading the gallery...';
     wake().then(function (health) {
       liveStatusLine(health);
+      watchLive(health);
       return loadGallery();
     }, function () {
       clear(box);
@@ -956,7 +997,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
     window.__ROADIE_TEST__.exports = {
       tierSummary: tierSummary, needsTierBadge: needsTierBadge, galleryComicsText: galleryComicsText,
       cityPreview: cityPreview, cleanCopy: cleanCopy, renderPlan: renderPlan, galleryCard: galleryCard,
-      liveStatusLine: liveStatusLine
+      liveStatusLine: liveStatusLine, watchLive: watchLive
     };
   } else {
     boot();

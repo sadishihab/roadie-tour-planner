@@ -17,6 +17,7 @@ from typing import Mapping
 
 from .paths import DEFAULT_DATA_DIR, data_dir as _data_dir, fixtures_dir as _fixtures_dir, gallery_dir as _gallery_dir
 
+QLOO_MODES = ("persistent", "oneshot")
 _TRUTHY = {"1", "true", "yes", "on"}
 
 
@@ -49,6 +50,12 @@ def _date(value: str | None) -> str:
     return text
 
 
+def _mode(value: str | None) -> str:
+    """persistent or oneshot; anything else (including unset) is the default, persistent."""
+    text = (value or "").strip().lower()
+    return text if text in QLOO_MODES else "persistent"
+
+
 @dataclass(frozen=True)
 class Settings:
     data_dir: Path = DEFAULT_DATA_DIR  # ROADIE_DATA_DIR; holds fixtures/ and gallery/ (private, never committed)
@@ -58,6 +65,7 @@ class Settings:
     trusted_proxy_hops: int = 1  # ROADIE_TRUSTED_PROXY_HOPS: entries counted from the right end of X-Forwarded-For
     live_workers: int = 4  # ROADIE_LIVE_WORKERS: concurrent Qloo calls inside one live run (1 = serial, hard max 6)
     qloo_bin: str = "qloo"
+    qloo_mode: str = "persistent"  # ROADIE_QLOO_MODE: persistent (one long-running `qloo mcp` process) or oneshot (one process per call)
     work_dir: Path | None = None  # parent of the temporary run folders; None = <data_dir>/live_tmp
     ip_runs_per_hour: int = 3
     global_runs_per_day: int = 15  # the hackathon key allows 10,000 requests a month; a run is at most 20
@@ -94,6 +102,7 @@ class Settings:
             trusted_proxy_hops=_int(env.get("ROADIE_TRUSTED_PROXY_HOPS"), 1, 1, 10),
             live_workers=_int(env.get("ROADIE_LIVE_WORKERS"), 4, 1, 6),
             work_dir=Path(work_dir) if work_dir else None,
+            qloo_mode=_mode(env.get("ROADIE_QLOO_MODE")),
             ip_runs_per_hour=_int(env.get("ROADIE_IP_RUNS_PER_HOUR"), 3),
             global_runs_per_day=_int(env.get("ROADIE_GLOBAL_RUNS_PER_DAY"), 15),
             monthly_runs=_int(env.get("ROADIE_MONTHLY_RUNS"), 300),

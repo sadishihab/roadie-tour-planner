@@ -36,6 +36,7 @@ from typing import Any, Callable, Iterator
 from .cities import CITIES
 from .narrator import TemplateNarrator, narrate
 from .pipeline import COMEDY_CLUB_TAG, plan_tour
+from .mcp_client import STARTING, HarnessError, McpClient, PersistentHarness
 from .qloo_client import FixtureClient, LiveClient, QlooClient, QlooError, build_chosen, city_slug, slugify
 from .ranking import _load_city
 from .settings import Settings
@@ -65,6 +66,7 @@ MESSAGES = {
     "ip_limit": "You have reached the hourly limit for live runs. Try again later.",
     "daily_limit": "The server has reached its daily limit for live runs. Try again tomorrow. The demo gallery is still available.",
     "monthly_limit": "The server has reached its monthly limit for live runs. The demo gallery is still available.",
+    "live_starting": "Live search is warming up, this can take about a minute. Please try again shortly.",
     "live_ended": "Live search has ended: the Qloo access key used for the hackathon is no longer active. The demo gallery is still available.",
     "search_limit": "Too many searches. Try again later.",
     "too_many_jobs": "Several live runs are already in progress. Try again in a few minutes.",
@@ -233,8 +235,19 @@ class MonthlyBudget:
 ClientFactory = Callable[[Callable[[float], None]], QlooClient]
 
 
-def default_client_factory(settings: Settings) -> ClientFactory:
-    return lambda sleep: LiveClient(qloo_bin=settings.qloo_bin, sleep=sleep)
+SEARCH_TIMEOUT = 90.0  # persistent mode: the one-off person search pays Node start-up (about 47 s at 0.1 CPU)
+
+
+def default_client_factory(settings: Settings, harness: PersistentHarness | None = None) -> ClientFactory:
+    """oneshot: a LiveClient per run (one process per call). persistent: an McpClient on the shared harness;
+    person search stays on a one-off LiveClient because no person-search tool is verified (see mcp_client.py)."""
+    if harness is None:
+        return lambda sleep: LiveClient(qloo_bin=settings.qloo_bin, sleep=sleep)
+    return lambda sleep: McpClient(
+        harness,
+        search_client=LiveClient(timeout=SEARCH_TIMEOUT, retries=0, qloo_bin=settings.qloo_bin, sleep=sleep),
+        sleep=sleep,
+    )
 
 
 def cap_strings(value: Any, limit: int = MAX_TEXT) -> Any:
@@ -343,10 +356,16 @@ class LiveService:
         clock: Callable[[], float] = time.monotonic,
         now: Callable[[], datetime] | None = None,
         pacer: RatePacer | None = None,
+        harness: PersistentHarness | None = None,
     ) -> None:
         self.s = settings
         self.pacer = pacer or RatePacer(settings.max_qloo_per_second)
-        factory = client_factory or default_client_factory(settings)
+        # A persistent harness exists only in persistent mode (an injected one wins, for tests); with an
+        # injected client_factory and no harness there is nothing to warm up.
+        if harness is None and client_factory is None and settings.qloo_mode == "persistent":
+            harness = PersistentHarness(qloo_bin=settings.qloo_bin)
+        self.harness = harness
+        factory = client_factory or default_client_factory(settings, harness)
         self.factory: ClientFactory = lambda sleep: PacedClient(factory(sleep), self.pacer)
         self.clock = clock
         self.now = now or (lambda: datetime.now(timezone.utc))
@@ -370,6 +389,15 @@ class LiveService:
             return False
         return self.now().date() > date.fromisoformat(self.s.live_until)
 
+    def readiness(self) -> str:
+        """ready (no harness, or its initialize finished), starting, or unavailable (gave up restarting)."""
+        return self.harness.status if self.harness is not None else "ready"
+
+    def warm_up(self) -> None:
+        """Start the persistent harness in the background (idempotent, never blocks, never raises)."""
+        if self.harness is not None:
+            self.harness.start()
+
     def budget_remaining(self) -> int:
         """Live plan runs still allowed right now: the smaller of today's and this month's allowance."""
         with self._lock:
@@ -390,6 +418,8 @@ class LiveService:
             raw = self.factory(CallBudget(3, self.pacer).retry_sleep).search_person(name)  # LiveClient bounds this at 1 + 2 retries
         except Exception as exc:
             log.warning("live search failed: %s", type(exc).__name__)
+            if isinstance(exc, HarnessError) and exc.code == STARTING:
+                raise LiveError(503, "live_starting", 15) from None
             raise LiveError(502, "qloo_unavailable") from None
         found: list[dict[str, Any]] = []
         for e in raw if isinstance(raw, list) else []:

@@ -49,8 +49,9 @@ def test_health_defaults_to_live_off(client):
     r = client.get("/api/health")
     assert r.status_code == 200
     body = r.json()
-    assert set(body) == {"status", "live_enabled", "live_budget_remaining", "gallery_count"}
+    assert set(body) == {"status", "live_enabled", "live_ready", "live_status", "live_budget_remaining", "gallery_count"}
     assert (body["status"], body["live_enabled"], body["live_budget_remaining"]) == ("ok", False, None)
+    assert (body["live_ready"], body["live_status"]) == (False, None)
     assert isinstance(body["gallery_count"], int) and body["gallery_count"] >= 2
 
 

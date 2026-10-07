@@ -9,6 +9,13 @@ responses, or a temporary folder written by a live run).
   error). `FixtureClient(slug, root=None)` reads `<ROADIE_DATA_DIR>/fixtures/<slug>/`; tests pass `tests/synthetic`.
   Comedians are Qloo person entities. `chosen.json` (entity_id, name, description) records the human's pick; without
   one the pipeline falls back to slug-vs-name matching, which raises when a name is ambiguous.
+- `mcp_client.py`: `PersistentHarness` owns one `qloo mcp` child (JSON-RPC lines on stdin/stdout): a writer lock, a reader
+  thread that matches responses to request ids, per-request timeouts, a supervisor thread that restarts the child at most 3
+  times with backoff and then reports `unavailable`. `McpClient` implements the same interface as `LiveClient` on top of it
+  (`where_popular` via `qloo_where_popular`; places, brands and similar via `qloo_recommend` with `signals` as an array) and
+  maps each document to the shapes the pipeline already reads. Person search stays on the one-off `LiveClient`. The child is
+  a small `ChildProcess` protocol, so tests use a scripted fake and never start a process. `ROADIE_QLOO_MODE=oneshot` keeps
+  the old per-call client.
 - `ranking.py` ranks the 12 candidate cities from saved `where_popular` results.
 - `pipeline.py`: `plan_tour(slug, client)` returns the plan below plus the ordered step events.
 - `cities.py`: candidate cities with approximate city-center coordinates (used for the route).
@@ -94,4 +101,11 @@ Measured facts about live mode, stated as measured:
   enough CPU and is unproven below 0.5 CPU.
 - (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
 
-A possible future fix, not yet implemented and untested: keep one long-running harness process (`qloo mcp`) so Node starts once.
+- (e) Persistent mode (`ROADIE_QLOO_MODE=persistent`, the default when live is on) keeps ONE long-running `qloo mcp`
+  process, so Node starts once. Measured with a probe at 0.1 CPU: about 42 seconds to start once, then 0.6 to 4 seconds
+  per call (`qloo_where_popular` 1 to 4 s, `qloo_recommend` 0.6 to 4 s). **Not verified:** a full live plan through the
+  persistent harness, and behavior after a harness crash on a real host (the restart logic is tested only against a fake
+  child process). Person search by name stays on the one-off `qloo` call, because the verified tool list names no
+  person-search tool; at 0.1 CPU that one call may still be slow (its timeout is 90 seconds, no retry).
+- Stopping rule: if a full live plan does not finish in about two minutes on Render's free instance, live mode stays
+  off (`ROADIE_LIVE=0`).

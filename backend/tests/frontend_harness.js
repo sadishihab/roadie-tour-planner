@@ -62,6 +62,6 @@ out.live = (input.healths || []).map((hl) => {
   Object.keys(byId).forEach((k) => delete byId[k]);
   api.liveStatusLine(hl);
   const f = byId['live-form'], l = byId['live-lede'], s = byId['live-status'];
-  return { formHidden: !!(f && f.hidden), ledeClass: l ? l.className : null, ledeText: l ? l.textContent : null, status: s ? s.textContent : null };
+  return { formHidden: !!(f && f.hidden), inputsDisabled: !!(byId['live-go'] && byId['live-go'].disabled), ledeClass: l ? l.className : null, ledeText: l ? l.textContent : null, status: s ? s.textContent : null };
 });
 process.stdout.write(JSON.stringify(out));

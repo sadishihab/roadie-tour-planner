@@ -22,7 +22,8 @@ the five pre-built gallery plans are the demo. See [Known limits](#known-limits)
    | Variable | Value |
    |---|---|
    | `QLOO_API_KEY` | your hackathon key, typed into the dashboard only (the blueprint declares it with `sync: false`) |
-   | `ROADIE_LIVE` | `0` on the free instance (see Known limits); `1` only on a host with enough CPU |
+   | `ROADIE_LIVE` | `0` on the free instance (see Known limits); switch to `1` only after persistent mode has been shown to finish a full live plan there (stopping rule below), or on a host with enough CPU |
+   | `ROADIE_QLOO_MODE` | optional; `persistent` (default, one long-running `qloo mcp` process) or `oneshot` (one process per call) |
    | `ROADIE_LIVE_UNTIL` | `2026-11-16` |
    | `ROADIE_GLOBAL_SEARCHES_PER_DAY` | `50` |
    | `ROADIE_TRUST_PROXY` | `1` (Render puts a proxy in front) |
@@ -88,7 +89,14 @@ Measured facts about live mode, stated as measured:
   enough CPU and is unproven below 0.5 CPU.
 - (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
 
-A possible future fix, not yet implemented and untested: keep one long-running harness process (`qloo mcp`) so Node starts once.
+- (e) Persistent mode (`ROADIE_QLOO_MODE=persistent`, the default when live is on) keeps ONE long-running `qloo mcp`
+  process, so Node starts once. Measured with a probe at 0.1 CPU: about 42 seconds to start once, then 0.6 to 4 seconds
+  per call (`qloo_where_popular` 1 to 4 s, `qloo_recommend` 0.6 to 4 s). **Not verified:** a full live plan through the
+  persistent harness, and behavior after a harness crash on a real host (the restart logic is tested only against a fake
+  child process). Person search by name stays on the one-off `qloo` call, because the verified tool list names no
+  person-search tool; at 0.1 CPU that one call may still be slow (its timeout is 90 seconds, no retry).
+- Stopping rule: if a full live plan does not finish in about two minutes on Render's free instance, live mode stays
+  off (`ROADIE_LIVE=0`).
 
 ## What was verified
 - The image was built and run locally with a 0.5 CPU and 512 MB limit. A real live search and a full live plan ran
@@ -98,6 +106,10 @@ A possible future fix, not yet implemented and untested: keep one long-running h
   and `trusted_base_url` in the harness config. The harness reads `QLOO_BASE_URL` and `QLOO_TRUSTED_BASE_URL` and trusts
   the endpoint when both name the hackathon URL; the entrypoint sets both as overridable defaults and runs `config set`
   with the key removed from its environment, discarding its output. The package declares Node >= 22.19.
+- Persistent mode, measured with a probe at 0.1 CPU: `qloo mcp` took about 42 seconds to start once, after which calls took
+  0.6 to 4 seconds. Not verified: a full live plan through the persistent harness, and what happens after a harness crash
+  on a real host. With live on, `/api/health` shows `live_ready: false` (`live_status: starting`) until `initialize`
+  finishes; live search and plan answer `503 live_starting` meanwhile, and `qloo_unavailable` if the harness gave up.
 - Not yet verified: Render's Secret Files path (assumption above) and Render's proxy hop count (see Notes).
 - The key is read from `QLOO_API_KEY` at run time only; it is never written to disk, printed or logged by Roadie.
 
