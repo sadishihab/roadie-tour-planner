@@ -1,0 +1,127 @@
+{
+  "schema_version": "synthetic-1",
+  "operation": "where_popular",
+  "status": "ok",
+  "interpretation": {
+    "entity": {
+      "input": "00000000-0000-4000-8000-000000000001",
+      "entityId": "00000000-0000-4000-8000-000000000001",
+      "name": "June Marlowe",
+      "type": "urn:entity:person",
+      "match": "identifier"
+    },
+    "within": "Austin, TX"
+  },
+  "results": [
+    {
+      "location": {
+        "latitude": 30.27,
+        "longitude": -97.74,
+        "geohash": "synth000"
+      },
+      "query": {
+        "affinity": 0.994,
+        "popularity": 0.92
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.28,
+        "longitude": -97.75,
+        "geohash": "synth001"
+      },
+      "query": {
+        "affinity": 0.986,
+        "popularity": 0.88
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.29,
+        "longitude": -97.76,
+        "geohash": "synth002"
+      },
+      "query": {
+        "affinity": 0.993,
+        "popularity": 0.915
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.3,
+        "longitude": -97.77,
+        "geohash": "synth003"
+      },
+      "query": {
+        "affinity": 0.987,
+        "popularity": 0.885
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.31,
+        "longitude": -97.78,
+        "geohash": "synth004"
+      },
+      "query": {
+        "affinity": 0.992,
+        "popularity": 0.91
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.32,
+        "longitude": -97.79,
+        "geohash": "synth005"
+      },
+      "query": {
+        "affinity": 0.988,
+        "popularity": 0.89
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.33,
+        "longitude": -97.8,
+        "geohash": "synth006"
+      },
+      "query": {
+        "affinity": 0.991,
+        "popularity": 0.905
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.34,
+        "longitude": -97.81,
+        "geohash": "synth007"
+      },
+      "query": {
+        "affinity": 0.989,
+        "popularity": 0.895
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.35,
+        "longitude": -97.82,
+        "geohash": "synth008"
+      },
+      "query": {
+        "affinity": 0.99,
+        "popularity": 0.9
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.36,
+        "longitude": -97.83,
+        "geohash": "synth009"
+      },
+      "query": {
+        "affinity": 0.99,
+        "popularity": 0.9
+      }
+    }
+  ]
+}

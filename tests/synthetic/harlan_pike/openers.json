@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Bram Oakhollow",
+    "entity_id": "00000000-0000-4000-8000-000000000089",
+    "type": "urn:entity",
+    "popularity": 0.74,
+    "query": {
+      "affinity": 0.971
+    }
+  },
+  {
+    "name": "Ysolde Carraway",
+    "entity_id": "00000000-0000-4000-8000-000000000090",
+    "type": "urn:entity",
+    "popularity": 0.9,
+    "query": {
+      "affinity": 0.968
+    }
+  },
+  {
+    "name": "Fenwick Strand",
+    "entity_id": "00000000-0000-4000-8000-000000000091",
+    "type": "urn:entity",
+    "popularity": 0.6,
+    "query": {
+      "affinity": 0.965
+    }
+  },
+  {
+    "name": "Maribel Quint",
+    "entity_id": "00000000-0000-4000-8000-000000000092",
+    "type": "urn:entity",
+    "popularity": 0.71,
+    "query": {
+      "affinity": 0.962
+    }
+  },
+  {
+    "name": "Gideon Thrupp",
+    "entity_id": "00000000-0000-4000-8000-000000000093",
+    "type": "urn:entity",
+    "popularity": 0.95,
+    "query": {
+      "affinity": 0.958
+    }
+  },
+  {
+    "name": "Thessaly Rook",
+    "entity_id": "00000000-0000-4000-8000-000000000094",
+    "type": "urn:entity",
+    "popularity": 0.4,
+    "query": {
+      "affinity": 0.955
+    }
+  },
+  {
+    "name": "Alder Penhallow",
+    "entity_id": "00000000-0000-4000-8000-000000000095",
+    "type": "urn:entity",
+    "popularity": 0.73,
+    "query": {
+      "affinity": 0.952
+    }
+  },
+  {
+    "name": "Constance Merrow",
+    "entity_id": "00000000-0000-4000-8000-000000000096",
+    "type": "urn:entity",
+    "popularity": 0.65,
+    "query": {
+      "affinity": 0.949
+    }
+  },
+  {
+    "name": "Hollis Dunmore",
+    "entity_id": "00000000-0000-4000-8000-000000000097",
+    "type": "urn:entity",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.946
+    }
+  },
+  {
+    "name": "Perdita Vane",
+    "entity_id": "00000000-0000-4000-8000-000000000098",
+    "type": "urn:entity",
+    "popularity": 0.85,
+    "query": {
+      "affinity": 0.943
+    }
+  }
+]

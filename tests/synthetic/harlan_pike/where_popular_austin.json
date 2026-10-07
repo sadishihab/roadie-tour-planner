@@ -1,0 +1,127 @@
+{
+  "schema_version": "synthetic-1",
+  "operation": "where_popular",
+  "status": "ok",
+  "interpretation": {
+    "entity": {
+      "input": "00000000-0000-4000-8000-000000000088",
+      "entityId": "00000000-0000-4000-8000-000000000088",
+      "name": "Harlan Pike",
+      "type": "urn:entity:person",
+      "match": "identifier"
+    },
+    "within": "Austin, TX"
+  },
+  "results": [
+    {
+      "location": {
+        "latitude": 30.27,
+        "longitude": -97.74,
+        "geohash": "synth000"
+      },
+      "query": {
+        "affinity": 0.949,
+        "popularity": 0.85
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.28,
+        "longitude": -97.75,
+        "geohash": "synth001"
+      },
+      "query": {
+        "affinity": 0.941,
+        "popularity": 0.81
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.29,
+        "longitude": -97.76,
+        "geohash": "synth002"
+      },
+      "query": {
+        "affinity": 0.948,
+        "popularity": 0.845
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.3,
+        "longitude": -97.77,
+        "geohash": "synth003"
+      },
+      "query": {
+        "affinity": 0.942,
+        "popularity": 0.815
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.31,
+        "longitude": -97.78,
+        "geohash": "synth004"
+      },
+      "query": {
+        "affinity": 0.947,
+        "popularity": 0.84
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.32,
+        "longitude": -97.79,
+        "geohash": "synth005"
+      },
+      "query": {
+        "affinity": 0.943,
+        "popularity": 0.82
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.33,
+        "longitude": -97.8,
+        "geohash": "synth006"
+      },
+      "query": {
+        "affinity": 0.946,
+        "popularity": 0.835
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.34,
+        "longitude": -97.81,
+        "geohash": "synth007"
+      },
+      "query": {
+        "affinity": 0.944,
+        "popularity": 0.825
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.35,
+        "longitude": -97.82,
+        "geohash": "synth008"
+      },
+      "query": {
+        "affinity": 0.945,
+        "popularity": 0.83
+      }
+    },
+    {
+      "location": {
+        "latitude": 30.36,
+        "longitude": -97.83,
+        "geohash": "synth009"
+      },
+      "query": {
+        "affinity": 0.945,
+        "popularity": 0.83
+      }
+    }
+  ]
+}

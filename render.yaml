@@ -1,0 +1,26 @@
+# Render blueprint: Roadie as a Docker web service on the free plan.
+# Secrets are entered in the Render dashboard (sync: false) and never stored in this repo.
+# The private gallery JSON files (<slug>.json) are uploaded as Secret Files in the dashboard
+# (combined limit 1 MB per service) and are never committed. See docs/DEPLOY.md.
+services:
+  - type: web
+    name: roadie
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: QLOO_API_KEY
+        sync: false
+      - key: ROADIE_LIVE
+        value: "1"
+      - key: ROADIE_LIVE_UNTIL
+        value: "2026-11-16"
+      - key: ROADIE_GLOBAL_SEARCHES_PER_DAY
+        value: "50"
+      - key: ROADIE_TRUST_PROXY
+        value: "1"
+      - key: QLOO_BASE_URL
+        value: https://hackathon.api.qloo.com
+      - key: QLOO_TRUSTED_BASE_URL
+        value: https://hackathon.api.qloo.com

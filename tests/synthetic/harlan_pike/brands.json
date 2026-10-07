@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Anvilwood Tools",
+    "entity_id": "00000000-0000-4000-8000-000000000099",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.95,
+    "query": {
+      "affinity": 0.96
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Saltmarsh Provisions",
+    "entity_id": "00000000-0000-4000-8000-000000000100",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.956
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Driftline Apparel",
+    "entity_id": "00000000-0000-4000-8000-000000000101",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.89,
+    "query": {
+      "affinity": 0.952
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Gristmill Bakery",
+    "entity_id": "00000000-0000-4000-8000-000000000102",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.86,
+    "query": {
+      "affinity": 0.948
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Halcyon Hot Sauce",
+    "entity_id": "00000000-0000-4000-8000-000000000103",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.83,
+    "query": {
+      "affinity": 0.944
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Ironbark Boots",
+    "entity_id": "00000000-0000-4000-8000-000000000104",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.8,
+    "query": {
+      "affinity": 0.94
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Juniper & Pine",
+    "entity_id": "00000000-0000-4000-8000-000000000105",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.936
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Kestrel Optics",
+    "entity_id": "00000000-0000-4000-8000-000000000106",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.74,
+    "query": {
+      "affinity": 0.932
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Lumen Candle Works",
+    "entity_id": "00000000-0000-4000-8000-000000000107",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.71,
+    "query": {
+      "affinity": 0.928
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Moorland Mustard",
+    "entity_id": "00000000-0000-4000-8000-000000000108",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.68,
+    "query": {
+      "affinity": 0.924
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  }
+]

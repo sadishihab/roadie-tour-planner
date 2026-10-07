@@ -1,0 +1,122 @@
+[
+  {
+    "name": "The Copper Kettle Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000237",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Boston, MA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Lazy Comet Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000238",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Boston, MA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Gilded Pigeon Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000239",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Boston, MA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Marble Owl Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000240",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Boston, MA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Crooked Spoon Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000241",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.87,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Boston, MA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  }
+]

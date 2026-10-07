@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Nimbus Notebooks",
+    "entity_id": "00000000-0000-4000-8000-000000000198",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.95,
+    "query": {
+      "affinity": 0.96
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Orchard Row Cider",
+    "entity_id": "00000000-0000-4000-8000-000000000199",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.956
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Pinecone Press",
+    "entity_id": "00000000-0000-4000-8000-000000000200",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.89,
+    "query": {
+      "affinity": 0.952
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Quill & Compass",
+    "entity_id": "00000000-0000-4000-8000-000000000201",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.86,
+    "query": {
+      "affinity": 0.948
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Riverbend Rope Co",
+    "entity_id": "00000000-0000-4000-8000-000000000202",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.83,
+    "query": {
+      "affinity": 0.944
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Sundial Socks",
+    "entity_id": "00000000-0000-4000-8000-000000000203",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.8,
+    "query": {
+      "affinity": 0.94
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Thistledown Linen",
+    "entity_id": "00000000-0000-4000-8000-000000000204",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.936
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  },
+  {
+    "name": "Umber Ink",
+    "entity_id": "00000000-0000-4000-8000-000000000205",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.74,
+    "query": {
+      "affinity": 0.932
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Outdoors"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "Vesper Vinyl",
+    "entity_id": "00000000-0000-4000-8000-000000000206",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.71,
+    "query": {
+      "affinity": 0.928
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Minimalist"
+      },
+      {
+        "name": "Everyday"
+      }
+    ]
+  },
+  {
+    "name": "Willowmere Woolens",
+    "entity_id": "00000000-0000-4000-8000-000000000207",
+    "type": "urn:entity",
+    "subtype": "urn:entity:brand",
+    "popularity": 0.68,
+    "query": {
+      "affinity": 0.924
+    },
+    "properties": {
+      "short_description": "Invented brand; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Lifestyle"
+      },
+      {
+        "name": "Handmade"
+      }
+    ]
+  }
+]

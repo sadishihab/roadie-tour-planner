@@ -1,0 +1,27 @@
+# Private data and anything that must never enter the image
+data
+**/data
+fixtures
+**/fixtures
+gallery
+**/gallery
+.env
+.env.*
+*.pem
+*.key
+
+# Tests, docs and tooling caches
+tests
+**/tests
+docs
+.git
+.github
+.venv
+venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+**/*.egg-info
+node_modules

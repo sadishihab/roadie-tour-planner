@@ -1,0 +1,146 @@
+[
+  {
+    "name": "The Foghorn Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000119",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Paper Moon Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000120",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000121",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Lazy Comet Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000122",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Gilded Pigeon Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000123",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Marble Owl Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000124",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Los Angeles, CA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  }
+]

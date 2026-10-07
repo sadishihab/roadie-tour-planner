@@ -1,0 +1,16 @@
+[project]
+name = "roadie-backend"
+version = "0.1.0"
+description = "Roadie backend: rank tour cities from saved Qloo where_popular results"
+requires-python = ">=3.11"
+dependencies = ["fastapi", "uvicorn"]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx"]
+
+[tool.setuptools.packages.find]
+include = ["roadie*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

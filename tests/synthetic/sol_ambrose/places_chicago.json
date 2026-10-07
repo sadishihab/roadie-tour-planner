@@ -1,0 +1,218 @@
+[
+  {
+    "name": "The Paper Moon Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000228",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000229",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Lazy Comet Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000230",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Gilded Pigeon Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000231",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Marble Owl Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000232",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Crooked Spoon Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000233",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.87,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Blue Thimble Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000234",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.82,
+    "query": {
+      "affinity": 0.828
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Tin Lantern Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000235",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.816
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Velvet Anvil Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000236",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.804
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Chicago, IL; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  }
+]

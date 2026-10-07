@@ -1,0 +1,146 @@
+[
+  {
+    "name": "The Velvet Anvil Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000173",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Foghorn Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000174",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Paper Moon Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000175",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000176",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Lazy Comet Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000177",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Gilded Pigeon Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000178",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.87,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  }
+]

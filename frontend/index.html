@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadie: tour planner for stand-up comedians</title>
+<meta name="description" content="Roadie plans a stand-up comedian's tour from real audience data.">
+<style>
+/* All colors and fonts live here: change the look in this one block. */
+:root {
+  --font-display: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bg: #15130f;            /* charcoal stage */
+  --bg-panel: #1f1c16;      /* cards and panels */
+  --bg-raised: #2a261e;     /* hovered / open panels */
+  --text: #f6eedd;          /* warm off-white */
+  --text-muted: #cfc5b0;    /* secondary text (AA on every background above) */
+  --accent: #ffb52e;        /* amber spotlight */
+  --accent-strong: #ffd27a; /* lighter amber for headings and links */
+  --on-accent: #15130f;     /* text on amber buttons */
+  --line: #4d4638;          /* dividers */
+  --line-strong: #9b8e75;   /* input and control borders (3:1 or better) */
+  --focus: #7fd4ff;         /* focus ring, distinct from the amber accent */
+  --danger-text: #ffb4a6;   /* problem messages (always labeled with the word Problem) */
+  --spot: rgba(255, 181, 46, 0.20);
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  min-height: 100vh;
+  overflow-wrap: anywhere;
+}
+/* the spotlight */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% -5%, var(--spot), transparent 70%),
+    linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.35));
+}
+main, .wrap { max-width: 62rem; margin: 0 auto; padding: 0 16px; }
+a { color: var(--accent-strong); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
+
+h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 400; line-height: 1.1; margin: 0 0 0.5rem; }
+h1 { font-size: clamp(3rem, 14vw, 5.5rem); color: var(--accent); text-shadow: 0 0 24px var(--spot); letter-spacing: 0.08em; }
+h2 { font-size: clamp(1.5rem, 6vw, 2rem); color: var(--accent-strong); }
+h3 { font-size: 1.15rem; color: var(--text); }
+h2:focus { outline: none; }
+p { margin: 0 0 0.75rem; }
+
+.bulbs { height: 14px; margin: 18px 0 10px; background: radial-gradient(circle, var(--accent) 3px, transparent 4px) 0 50% / 22px 14px repeat-x; opacity: 0.85; animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: 0.45; } }
+header.hero { padding-top: 8px; text-align: center; }
+.tagline { font-size: 1.2rem; max-width: 36rem; margin: 0 auto 0.5rem; }
+.audience { color: var(--text-muted); max-width: 36rem; margin: 0 auto 1rem; }
+section.block { margin: 2.25rem 0; }
+.lede { color: var(--text-muted); max-width: 44rem; }
+
+/* cards */
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); padding: 0; margin: 0; list-style: none; }
+.card {
+  display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%; text-align: left; cursor: pointer;
+  background: var(--bg-panel); color: var(--text); border: 1px solid var(--line-strong); border-radius: var(--radius);
+  padding: 14px 16px; font: inherit;
+}
+.card:hover { background: var(--bg-raised); border-color: var(--accent); }
+.card .name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.4rem; color: var(--accent-strong); }
+.card .desc { color: var(--text-muted); }
+.card .stats { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.95rem; }
+.grid > li { display: flex; }
+.card { flex: 1; }
+.card .foot { margin-top: auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; padding-top: 6px; }
+.card .open { color: var(--accent-strong); font-weight: 600; }
+
+/* labels: always words; shape differs as well as color */
+.tag, .badge {
+  display: inline-block; font-size: 0.8rem; line-height: 1.2; padding: 2px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.02em;
+  border: 1px solid var(--line-strong); color: var(--text); background: transparent; vertical-align: middle; white-space: nowrap;
+}
+.badge.qloo { border-style: solid; border-color: var(--accent); color: var(--accent-strong); }
+.badge.roadie { border-style: dashed; border-color: var(--text); color: var(--text); }
+.badge.model { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.badge.template { border-style: double; border-width: 3px; }
+.tier { text-transform: uppercase; }
+.tier.strong { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.tier.moderate { border-style: dashed; border-color: var(--accent); color: var(--accent-strong); }
+.tier.weaker { border-style: dotted; }
+
+/* buttons and form */
+button, .btn { font: inherit; }
+.btn {
+  background: var(--accent); color: var(--on-accent); border: 2px solid var(--accent); border-radius: var(--radius);
+  padding: 10px 18px; font-weight: 700; cursor: pointer; min-height: 44px;
+}
+.btn:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.btn.secondary { background: transparent; color: var(--text); border-color: var(--line-strong); }
+.btn.secondary:hover { border-color: var(--accent); background: var(--bg-raised); }
+.btn.small { padding: 4px 12px; min-height: 44px; font-size: 0.9rem; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+label { display: block; font-weight: 600; margin-bottom: 4px; }
+input[type=text] {
+  font: inherit; width: 100%; padding: 10px 12px; min-height: 44px; border-radius: var(--radius);
+  border: 2px solid var(--line-strong); background: var(--bg); color: var(--text);
+}
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.row .field { flex: 1 1 14rem; }
+.hint { color: var(--text-muted); font-size: 0.92rem; margin: 6px 0 0; }
+
+.panel { background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin: 14px 0; }
+.panel.extra { border: 2px dashed var(--line-strong); }
+.problem { border: 2px solid var(--danger-text); border-radius: var(--radius); padding: 10px 14px; color: var(--danger-text); background: var(--bg-panel); margin: 12px 0; }
+.problem strong { text-transform: uppercase; letter-spacing: 0.05em; }
+.notice { border-left: 4px solid var(--accent); padding: 8px 14px; background: var(--bg-panel); margin: 12px 0; }
+
+/* cold start */
+.waking { display: flex; gap: 12px; align-items: center; background: var(--bg-panel); border-bottom: 2px solid var(--accent); padding: 12px 16px; }
+.waking .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); flex: none; animation: breathe 1.8s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(0.6); opacity: 0.5; } }
+
+/* plan */
+.route { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 6px 0 10px; align-items: stretch; }
+.route li { display: flex; }
+.route-caption { margin: 10px 0 0; font-weight: 600; color: var(--accent-strong); }
+.tier-line { margin: 6px 0; }
+.stop {
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; cursor: pointer; min-height: 44px;
+  background: var(--bg-panel); color: var(--text); border: 1px solid var(--accent); border-radius: var(--radius); padding: 6px 12px; font: inherit;
+}
+.stop:hover { background: var(--bg-raised); }
+.stop .city { font-weight: 700; }
+details { background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius); margin: 10px 0; }
+details[open] { background: var(--bg-raised); border-color: var(--line-strong); }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 700; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary:hover { color: var(--accent-strong); }
+.chev { flex: none; width: 0.6em; height: 0.6em; margin: 0 6px 0 2px; border-right: 3px solid var(--accent); border-bottom: 3px solid var(--accent); transform: rotate(-45deg); transition: transform 0.15s; }
+details[open] > summary .chev { transform: rotate(45deg); }
+summary .preview { flex: 1 0 100%; padding-left: calc(0.6em + 8px + 6px); font-weight: 400; font-size: 0.92rem; color: var(--text-muted); }
+details > .body { padding: 0 16px 14px; }
+.body h4 { margin: 14px 0 4px; font-size: 1rem; color: var(--accent-strong); }
+ul.plain { margin: 6px 0; padding-left: 1.2rem; }
+ul.plain li { margin: 4px 0; }
+.pitch { white-space: pre-wrap; margin: 6px 0 8px; }
+.meta { color: var(--text-muted); font-size: 0.92rem; }
+.people { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 10px; }
+.people li { background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+.people .who { font-weight: 700; margin-right: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; margin: 8px 0; }
+.chips li { background: var(--bg-panel); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 4px 12px; }
+.steps { list-style: none; padding: 0; margin: 10px 0; }
+.steps li { border-left: 3px solid var(--line-strong); padding: 4px 0 4px 12px; margin: 6px 0; }
+.legend { display: grid; gap: 8px; }
+.legend p { margin: 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+
+footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40px; color: var(--text-muted); font-size: 0.92rem; }
+
+@media (max-width: 420px) {
+  .btn { width: 100%; }
+  .btn.small { width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div id="waking" class="waking" role="status" hidden>
+  <span class="dot" aria-hidden="true"></span>
+  <span id="waking-text"></span>
+</div>
+
+<main id="main">
+  <!-- Home -->
+  <div id="home">
+    <header class="hero">
+      <div class="bulbs" aria-hidden="true"></div>
+      <h1>Roadie</h1>
+      <p class="tagline">Roadie plans a stand-up comedian's tour from real audience data</p>
+      <p class="audience">For touring comics, managers and small promoters.</p>
+      <div class="bulbs" aria-hidden="true"></div>
+    </header>
+
+    <noscript><p class="problem"><strong>Problem:</strong> Roadie needs JavaScript to load the gallery.</p></noscript>
+
+    <section class="block" aria-labelledby="gallery-h">
+      <h2 id="gallery-h">Demo gallery</h2>
+      <p class="lede">Pre-built tour plans. Pick a comedian to see cities grouped by tier, a west-to-east route, comics to bill with, comedy venues and brand candidates.</p>
+      <div id="gallery-status" role="status"></div>
+      <ul id="gallery" class="grid"></ul>
+    </section>
+
+    <section class="block" aria-labelledby="live-h">
+      <div class="panel extra">
+        <h2 id="live-h">Live search <span class="tag">extra</span></h2>
+        <p class="lede">Optional extra: look up any comedian live. It is slower and limited: a reduced set of 6 cities, template-written text and no comic identification. It may be switched off or out of budget; the gallery above always works.</p>
+        <p id="live-status" class="meta" role="status"></p>
+        <form id="live-form" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="live-name">Comedian name</label>
+              <input id="live-name" type="text" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="live-hint live-problem">
+            </div>
+            <button class="btn" type="submit" id="live-go">Search</button>
+          </div>
+          <p id="live-hint" class="hint">Public names only. 2 to 60 letters, spaces, periods, apostrophes or hyphens.</p>
+        </form>
+        <div id="live-problem" aria-live="polite"></div>
+        <div id="live-candidates" hidden>
+          <h3 id="cand-h">Which one do you mean?</h3>
+          <p class="hint">Choose a match. Roadie never picks for you.</p>
+          <ul id="cand-list" class="people"></ul>
+        </div>
+        <div id="live-progress" hidden>
+          <h3>Building the plan</h3>
+          <ol id="live-steps" class="steps" aria-live="polite"></ol>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Plan view -->
+  <div id="plan-view" hidden>
+    <p class="toolbar"><button class="btn secondary" type="button" id="back">Back to the gallery</button></p>
+    <div id="plan"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Audience data from Qloo. The plans on this page were pre-computed and are stored privately. Affinity describes aggregate audiences, not individuals or what any person will do.</p>
+  </div>
+</footer>
+
+<script>
+'use strict';
+(function () {
+  // ---- constants -------------------------------------------------------------------------------
+  var NAME_RE = /^[A-Za-z][A-Za-z .'\-]{0,58}[A-Za-z.]$/; // same rule as the server
+  var JOB_RE = /^[A-Za-z0-9_-]{16,64}$/;
+  var TIER_WORDS = { strong: 'strong', moderate: 'moderate', weaker: 'weaker' };
+  var SOURCE_LABELS = { qloo_result: 'Qloo result', roadie_interpretation: 'Roadie reading' };
+  var RELATIONS = { 'peer': 'peer', 'bigger act': 'bigger act', 'smaller act': 'smaller act' };
+  var WAKE_AFTER_MS = 4000;
+  var WAKE_GIVE_UP_MS = 90000;
+
+  // Fixed sentences for every error code. The server's own text is never shown.
+  var ERRORS = {
+    live_disabled: 'Live search is switched off on this server. The demo gallery is still available.',
+    live_ended: 'Live search has ended: the Qloo access key used for the hackathon is no longer active. The demo gallery is still available.',
+    daily_limit: 'The live budget for today has been used up. Try again tomorrow. The demo gallery is still available.',
+    monthly_limit: 'The live budget for this month has been used up. The demo gallery is still available.',
+    ip_limit: 'Too many requests from you in the last hour. Please try again later.',
+    search_limit: 'Too many searches. Please try again later.',
+    too_many_jobs: 'Several live runs are already in progress. Please try again in a few minutes.',
+    qloo_unavailable: 'Qloo is not available right now. The demo gallery is still available.',
+    call_cap_reached: 'The run hit its safety limit on Qloo calls and was stopped. The demo gallery is still available.',
+    plan_failed: 'A plan could not be built from the results. The demo gallery is still available.',
+    unknown_entity: 'Search for the comedian again, then pick one of the matches.',
+    invalid_request: 'That request was not accepted. Check the name and try again.',
+    not_found: 'That was not found.',
+    internal_error: 'Something went wrong on the server. Please try again later.'
+  };
+  var GENERIC_ERROR = 'Something went wrong. Please try again later. The demo gallery is still available.';
+
+  // ---- tiny DOM helpers: text only ----------------------------------------------------------------
+  // Every string that comes from the API goes in through textContent. Classes and attributes are literals.
+  function $(id) { return document.getElementById(id); }
+  function h(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) { e.className = cls; }
+    if (text !== undefined && text !== null) { e.textContent = String(text); }
+    return e;
+  }
+  function put(parent) {
+    for (var i = 1; i < arguments.length; i++) {
+      if (arguments[i]) { parent.appendChild(arguments[i]); }
+    }
+    return parent;
+  }
+  function clear(node) { while (node.firstChild) { node.removeChild(node.firstChild); } }
+  function str(v) { return typeof v === 'string' ? v : ''; }
+  function arr(v) { return Array.isArray(v) ? v : []; }
+  function obj(v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
+  // Plans stored earlier may still carry the internal field name in their notes; never show it.
+  function cleanCopy(t) { return String(t).replace(/identified_as_comedian/g, 'an identified comedian'); }
+  function noteText(n) { return cleanCopy(typeof n === 'string' ? n : str(obj(n).text)); }
+
+  // ---- small pure helpers (tested with node on synthetic plans) --------------------------------------
+  var TIER_ORDER = ['strong', 'moderate', 'weaker', 'unknown'];
+  function tierKey(t) { return TIER_WORDS[t] ? t : 'unknown'; }
+  // The tier most cities share, so it is stated once and only the cities that differ get a badge.
+  function tierSummary(tiers) {
+    var total = tiers.length;
+    var counts = {};
+    tiers.forEach(function (t) { var k = tierKey(t); counts[k] = (counts[k] || 0) + 1; });
+    var baseline = 'unknown';
+    var best = 0;
+    TIER_ORDER.forEach(function (k) { if ((counts[k] || 0) > best) { best = counts[k]; baseline = k; } });
+    var word = baseline === 'unknown' ? 'tier not stated' : baseline + ' affinity';
+    var text = '';
+    if (total === 1) { text = 'The one city: ' + word; }
+    else if (total > 1) { text = (best === total ? 'All ' + total : best + ' of ' + total) + ' cities: ' + word; }
+    return { total: total, baseline: baseline, count: best, uniform: total > 0 && best === total, text: text };
+  }
+  function needsTierBadge(summary, tier) { return tierKey(tier) !== summary.baseline; }
+  function galleryComicsText(n) { return n === 0 ? 'No comics identified' : plural(n, 'identified comic', 'identified comics'); }
+  function venuesFor(plan, city) {
+    var v = arr(obj(plan.comedy_venues).cities).filter(function (x) { return obj(x).city === city; })[0];
+    return obj(v);
+  }
+  function billPick(plan) {
+    return arr(obj(plan.comics_to_bill).items).map(obj).filter(function (c) { return c.identified_as_comedian === true; })[0];
+  }
+  function cityPreview(plan, city) {
+    var venues = venuesFor(plan, city);
+    var n = arr(venues.items).length;
+    var text = n > 0 ? plural(n, 'venue', 'venues') : 'no venues listed';
+    if (noteText(venues.limited_data_note)) { text += '. ' + noteText(venues.limited_data_note); }
+    return text;
+  }
+  function sourceBadge(source) {
+    var label = SOURCE_LABELS[source];
+    if (!label) { return null; }
+    return h('span', source === 'qloo_result' ? 'badge qloo' : 'badge roadie', label);
+  }
+  function tierBadge(tier) {
+    var word = TIER_WORDS[tier];
+    if (!word) { return h('span', 'badge tier', 'tier not stated'); }
+    return h('span', 'badge tier ' + word, word + ' affinity');
+  }
+  function relationBadge(relation) {
+    return RELATIONS[relation] ? h('span', 'badge roadie', RELATIONS[relation]) : null;
+  }
+  function problem(text) {
+    return put(h('p', 'problem'), h('strong', null, 'Problem: '), document.createTextNode(text));
+  }
+
+  // ---- network (same origin only) -------------------------------------------------------------------
+  function request(path, options, timeoutMs) {
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs || 20000) : null;
+    var init = options || {};
+    if (ctl) { init.signal = ctl.signal; }
+    return fetch(path, init).then(function (res) {
+      if (timer) { clearTimeout(timer); }
+      return res.json().then(function (body) { return { status: res.status, ok: res.ok, body: body }; },
+        function () { return { status: res.status, ok: res.ok, body: null }; });
+    }, function (err) {
+      if (timer) { clearTimeout(timer); }
+      throw err;
+    });
+  }
+  function getJSON(path, timeoutMs) { return request('/api/' + path, { method: 'GET', headers: { 'Accept': 'application/json' } }, timeoutMs); }
+  function postJSON(path, data) {
+    return request('/api/' + path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data)
+    }, 30000);
+  }
+  function errorSentence(res) {
+    var code = res && res.body && typeof res.body.error === 'string' ? res.body.error : '';
+    return Object.prototype.hasOwnProperty.call(ERRORS, code) ? ERRORS[code] : GENERIC_ERROR;
+  }
+
+  // ---- cold start: wait for a sleeping host ---------------------------------------------------------
+  function wake() {
+    return new Promise(function (resolve, reject) {
+      var started = Date.now();
+      var delay = 1500;
+      var shown = false;
+      var wakeTimer = setTimeout(function () {
+        shown = true;
+        $('waking-text').textContent = 'Waking the server, this can take about a minute';
+        $('waking').hidden = false;
+      }, WAKE_AFTER_MS);
+      function done(ok, health) {
+        clearTimeout(wakeTimer);
+        if (shown) { $('waking').hidden = true; }
+        if (ok) { resolve(health); } else { reject(new Error('asleep')); }
+      }
+      function attempt() {
+        getJSON('health', 15000).then(function (res) {
+          if (res.ok && res.body && res.body.status === 'ok') { done(true, res.body); } else { again(); }
+        }, again);
+      }
+      function again() {
+        if (Date.now() - started + delay >= WAKE_GIVE_UP_MS) { done(false); return; }
+        setTimeout(attempt, delay);
+        delay = Math.min(Math.round(delay * 1.6), 10000);
+      }
+      attempt();
+    });
+  }
+
+  // ---- gallery ---------------------------------------------------------------------------------------
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  function loadGallery() {
+    var status = $('gallery-status');
+    var list = $('gallery');
+    clear(list);
+    clear(status);
+    return getJSON('gallery').then(function (res) {
+      if (!res.ok || !Array.isArray(res.body)) { status.appendChild(problem('The gallery could not be loaded. Please try again later.')); return; }
+      if (res.body.length === 0) { status.textContent = 'The demo gallery is unavailable on this server right now: no gallery files were found.'; return; }
+      res.body.forEach(function (item) { list.appendChild(galleryCard(obj(item))); });
+    }, function () {
+      status.appendChild(problem('The gallery could not be loaded. Please try again later.'));
+    });
+  }
+
+  function galleryCard(item) {
+    var slug = str(item.slug);
+    var built = item.built_with === 'openai' ? 'written by model' : 'template';
+    var strong = typeof item.strong_city_count === 'number' ? item.strong_city_count : 0;
+    var ids = typeof item.identified_comics === 'number' ? item.identified_comics : 0;
+    var btn = h('button', 'card');
+    btn.type = 'button';
+    put(btn, h('span', 'name', str(item.name) || 'Unnamed comedian'));
+    put(btn, h('span', 'desc', str(item.description)));
+    var stats = h('ul', 'stats');
+    put(stats, h('li', null, plural(strong, 'strong-affinity city', 'strong-affinity cities')));
+    put(stats, h('li', null, galleryComicsText(ids)));
+    put(btn, stats);
+    put(btn, put(h('div', 'foot'),
+      put(h('span'), h('span', item.built_with === 'openai' ? 'tag model' : 'tag', built)),
+      h('span', 'open', 'Open the plan')));
+    btn.addEventListener('click', function () { openGalleryPlan(slug); });
+    return put(h('li'), btn);
+  }
+
+  function openGalleryPlan(slug) {
+    // slug came from the gallery listing; the server accepts only [a-z0-9_]{1,40} and answers 404 otherwise
+    if (!/^[a-z0-9_]{1,40}$/.test(slug)) { return; }
+    getJSON('plan/' + slug).then(function (res) {
+      if (!res.ok || !res.body) { showPlanProblem(errorSentence(res)); return; }
+      showPlan(res.body, 'gallery');
+    }, function () { showPlanProblem('The plan could not be loaded. Please try again.'); });
+  }
+
+  // ---- plan view --------------------------------------------------------------------------------------
+  var lastHomeFocus = null;
+
+  function showView(planMode) {
+    $('home').hidden = planMode;
+    $('plan-view').hidden = !planMode;
+  }
+
+  function showPlanProblem(text) {
+    var box = $('gallery-status');
+    clear(box);
+    box.appendChild(problem(text));
+  }
+
+  function showPlan(entry, mode) {
+    lastHomeFocus = document.activeElement;
+    var root = $('plan');
+    clear(root);
+    renderPlan(root, entry, mode);
+    showView(true);
+    window.scrollTo(0, 0);
+    var heading = $('plan-title');
+    if (heading) { heading.tabIndex = -1; heading.focus(); }
+  }
+
+  function copyButton(text, label) {
+    var btn = h('button', 'btn secondary small', label);
+    btn.type = 'button';
+    btn.addEventListener('click', function () {
+      function flash(msg) {
+        btn.textContent = msg;
+        setTimeout(function () { btn.textContent = label; }, 2000);
+      }
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, function () { flash('Copy failed'); });
+      } else {
+        flash('Copy not available');
+      }
+    });
+    return btn;
+  }
+
+  function section(title, source) {
+    var s = h('section', 'block');
+    var head = h('h2', null, title);
+    if (source) { put(head, document.createTextNode(' '), sourceBadge(source)); }
+    s.appendChild(head);
+    return s;
+  }
+
+  function renderPlan(root, entry, mode) {
+    var data = obj(entry);
+    var plan = obj(data.plan);
+    var narr = obj(data.narration);
+    var name = str(data.name) || str(obj(plan.comedian).name) || 'This comedian';
+    var live = mode === 'live';
+
+    // heading + summary with the writer badge
+    var title = h('h2', null, name);
+    title.id = 'plan-title';
+    root.appendChild(title);
+    if (str(data.description)) { root.appendChild(h('p', 'meta', data.description)); }
+
+    var source = str(narr.source) || str(data.built_with);
+    var writer;
+    if (source === 'openai') { writer = h('span', 'badge model', 'Written by the model'); }
+    else if (source === 'template_fallback') { writer = h('span', 'badge template', 'Template text (model text was not used)'); }
+    else { writer = h('span', 'badge template', 'Written by the template'); }
+
+    var sum = h('div', 'panel');
+    put(sum, put(h('p'), writer));
+    put(sum, h('p', null, str(narr.summary) || 'No summary is available for this plan.'));
+    root.appendChild(sum);
+
+    if (live) {
+      var warns = arr(data.warnings).length;
+      var liveNote = h('p', 'notice', 'Live plan: the text is written by the template, not a model; it covers a reduced set of 6 cities; and comics are not identified as comedians.');
+      root.appendChild(liveNote);
+      if (warns > 0) {
+        root.appendChild(h('p', 'notice', 'Some Qloo calls returned nothing, so parts of this plan may be thinner than usual.'));
+      }
+    }
+
+    root.appendChild(howToRead());
+    root.appendChild(routeSection(plan, narr, live));
+    root.appendChild(bookingSection(narr));
+    root.appendChild(comicsSection(plan, live));
+    root.appendChild(sponsorsSection(plan));
+    root.appendChild(limitsPanel());
+  }
+
+  function howToRead() {
+    var box = h('div', 'panel');
+    box.appendChild(h('h3', null, 'How to read this'));
+    var legend = h('div', 'legend');
+    put(legend, put(h('p'), sourceBadge('qloo_result'), document.createTextNode(' A value Qloo returned: an aggregate audience affinity or popularity, never a claim about one person.')));
+    put(legend, put(h('p'), sourceBadge('roadie_interpretation'), document.createTextNode(' Roadie\'s own reading of those values: tiers, the route order, whether a comic is a peer, bigger act or smaller act, and which comics look like comedians.')));
+    box.appendChild(legend);
+    return box;
+  }
+
+  function cityTier(plan, city, fallback) {
+    if (TIER_WORDS[fallback]) { return fallback; }
+    var found = arr(plan.cities).filter(function (c) { return obj(c).city === city; })[0];
+    return found ? str(found.tier) : '';
+  }
+
+  function routeSection(plan, narr, live) {
+    var sec = section('Suggested route');
+    var route = obj(plan.route_suggestion);
+    var order = arr(route.order);
+    var pitches = {};
+    arr(narr.city_pitches).forEach(function (p) { var o = obj(p); pitches[str(o.city)] = str(o.text); });
+
+    var cityNote = h('p', 'lede');
+    put(cityNote, sourceBadge('roadie_interpretation'), document.createTextNode(' A suggested geographic order, west to east. It is not a ranking: cities in the same tier cannot be meaningfully ordered against each other.'));
+    sec.appendChild(cityNote);
+    if (noteText(route.note)) { sec.appendChild(h('p', 'meta', noteText(route.note))); }
+
+    if (order.length === 0) {
+      sec.appendChild(h('p', 'notice', 'No city reached the strong tier in this plan, so Roadie suggests no route.'));
+    } else {
+      var tiers = order.map(function (stop) { return cityTier(plan, str(obj(stop).city), str(obj(stop).tier)); });
+      var summary = tierSummary(tiers);
+      sec.appendChild(h('p', 'tier-line', summary.text));
+      sec.appendChild(h('p', 'route-caption', 'West to east'));
+      var strip = h('ol', 'route');
+      strip.setAttribute('aria-label', 'Cities in suggested west-to-east order');
+      var sections = [];
+      order.forEach(function (stop, i) {
+        var s = obj(stop);
+        var d = cityDetails(plan, s, pitches, live, tiers[i], needsTierBadge(summary, tiers[i]));
+        sections.push(d);
+        var li = h('li');
+        var box = h('button', 'stop');
+        box.type = 'button';
+        put(box, h('span', 'city', str(s.city)));
+        if (needsTierBadge(summary, tiers[i])) { put(box, tierBadge(tiers[i])); }
+        box.addEventListener('click', function () {
+          d.open = true;
+          if (typeof d.scrollIntoView === 'function') { d.scrollIntoView({ block: 'start' }); }
+          var head = d.firstChild;
+          if (head && typeof head.focus === 'function') { head.focus(); }
+        });
+        li.appendChild(box);
+        strip.appendChild(li);
+      });
+      sec.appendChild(strip);
+      sections.forEach(function (d) { sec.appendChild(d); });
+    }
+    sec.appendChild(allCities(plan));
+    return sec;
+  }
+
+  function cityDetails(plan, stop, pitches, live, tier, showTier) {
+    var city = str(stop.city);
+    var d = h('details');
+    var sum = h('summary');
+    var chev = h('span', 'chev');
+    chev.setAttribute('aria-hidden', 'true');
+    put(sum, chev, h('span', null, city), showTier ? tierBadge(tier) : null, h('span', 'preview', cityPreview(plan, city)));
+    d.appendChild(sum);
+    var body = h('div', 'body');
+
+    // pitch
+    body.appendChild(h('h4', null, 'Pitch for ' + city));
+    var text = pitches[city];
+    if (text) {
+      body.appendChild(h('p', 'pitch', text));
+      body.appendChild(copyButton(text, 'Copy pitch'));
+    } else {
+      body.appendChild(h('p', 'meta', 'No pitch text is available for this city.'));
+    }
+
+    // venues
+    var venues = venuesFor(plan, city);
+    var venueHead = h('h4', null, 'Comedy venues Qloo lists for this audience');
+    if (arr(venues.items).length > 0) { put(venueHead, document.createTextNode(' '), sourceBadge('qloo_result')); }
+    body.appendChild(venueHead);
+    var items = arr(venues.items);
+    if (items.length > 0) {
+      var ul = h('ul', 'plain');
+      items.forEach(function (it) {
+        var o = obj(it);
+        put(ul, h('li', null, str(o.name)));
+      });
+      body.appendChild(ul);
+    } else {
+      body.appendChild(h('p', 'meta', 'Qloo lists no comedy venues for this city in this data.'));
+    }
+    var limited = venues.limited_data_note;
+    if (noteText(limited)) {
+      body.appendChild(put(h('p', 'meta'), sourceBadge(obj(limited).source || 'roadie_interpretation'), document.createTextNode(' ' + noteText(limited))));
+    }
+
+    // comic to bill with
+    body.appendChild(h('h4', null, 'Comic to bill with'));
+    var pick = billPick(plan);
+    if (pick) {
+      var p = h('p');
+      put(p, document.createTextNode(str(pick.name) + ' '), sourceBadge('qloo_result'));
+      if (relationBadge(pick.relation)) { put(p, document.createTextNode(' '), relationBadge(pick.relation)); }
+      body.appendChild(p);
+      body.appendChild(h('p', 'meta', 'Identified as a comedian by Roadie\'s text match on a one-line description. Qloo shows audience overlap only.'));
+    } else if (live) {
+      body.appendChild(h('p', 'meta', 'Live plans do not identify comics as comedians, so no comic is suggested here.'));
+    } else {
+      body.appendChild(h('p', 'meta', 'No comedians were identified among the people Qloo shows audience overlap with, so no comic is suggested.'));
+    }
+    body.appendChild(h('p', 'meta', 'Capacity, availability and terms are not part of this data.'));
+    d.appendChild(body);
+    return d;
+  }
+
+  function allCities(plan) {
+    var cities = arr(plan.cities).map(obj);
+    var d = h('details');
+    d.appendChild(h('summary', null, 'All scored cities, grouped by tier'));
+    var body = h('div', 'body');
+    if (noteText(plan.city_tier_note)) { body.appendChild(h('p', 'meta', noteText(plan.city_tier_note))); }
+    ['strong', 'moderate', 'weaker'].forEach(function (tier) {
+      var names = cities.filter(function (c) { return c.tier === tier; }).map(function (c) { return str(c.city); });
+      if (names.length === 0) { return; }
+      var row = h('p');
+      put(row, tierBadge(tier), document.createTextNode(' ' + names.join(', ')));
+      body.appendChild(row);
+    });
+    d.appendChild(body);
+    return d;
+  }
+
+  function bookingSection(narr) {
+    var sec = section('Booking pitch');
+    var text = str(narr.booking_pitch);
+    if (!text) { sec.appendChild(h('p', 'meta', 'No booking pitch is available for this plan.')); return sec; }
+    var box = h('div', 'panel');
+    put(box, h('p', 'pitch', text));
+    put(box, copyButton(text, 'Copy pitch'));
+    sec.appendChild(box);
+    return sec;
+  }
+
+  function comicsSection(plan, live) {
+    var sec = section('Comics to bill with');
+    var block = obj(plan.comics_to_bill);
+    var items = arr(block.items).map(obj);
+    sec.appendChild(h('p', 'lede', 'People whose audiences overlap with this comedian\'s. Qloo returns people, not necessarily comedians, so each is marked below; only people identified as comedians get a size label.'));
+    var yes = items.filter(function (c) { return c.identified_as_comedian === true; });
+    var no = items.filter(function (c) { return c.identified_as_comedian === false; });
+    var unknown = items.filter(function (c) { return c.identified_as_comedian !== true && c.identified_as_comedian !== false; });
+    if (items.length === 0) {
+      sec.appendChild(h('p', 'meta', 'Qloo returned no people with overlapping audiences.'));
+    } else if (yes.length === 0) {
+      sec.appendChild(h('p', 'notice', live
+        ? 'Live plans do not identify comics as comedians, so Roadie suggests no comic to bill with.'
+        : 'No comedians were identified among the people Qloo shows audience overlap with, so Roadie suggests no comic to bill with.'));
+    }
+    function personItem(c, withSize) {
+      var li = h('li');
+      var top = h('p');
+      put(top, h('span', 'who', str(c.name)), sourceBadge('qloo_result'));
+      if (withSize && relationBadge(c.relation)) { put(top, document.createTextNode(' '), relationBadge(c.relation)); }
+      li.appendChild(top);
+      var mark = h('p', 'meta');
+      if (c.identified_as_comedian === true) { put(mark, h('span', 'badge roadie', 'identified as a comedian')); }
+      else if (c.identified_as_comedian === false) { put(mark, h('span', 'badge roadie', 'not identified as a comedian')); }
+      else { put(mark, h('span', 'badge roadie', live ? 'identification not run for live plans' : 'identification not captured')); }
+      put(mark, document.createTextNode(' '), sourceBadge('roadie_interpretation'));
+      li.appendChild(mark);
+      if (str(c.description)) { li.appendChild(h('p', 'meta', c.description)); }
+      return li;
+    }
+    // the size label (peer, bigger act, smaller act) is only for people identified as comedians
+    var shown = yes.concat(unknown);
+    if (shown.length > 0) {
+      var list = h('ul', 'people');
+      shown.forEach(function (c) { list.appendChild(personItem(c, yes.indexOf(c) >= 0)); });
+      sec.appendChild(list);
+    }
+    if (no.length > 0) {
+      var more = h('details');
+      more.appendChild(h('summary', null, 'People Qloo returned who are not identified as comedians'));
+      var moreBody = h('div', 'body');
+      var moreList = h('ul', 'people');
+      no.forEach(function (c) { moreList.appendChild(personItem(c, false)); });
+      moreBody.appendChild(moreList);
+      more.appendChild(moreBody);
+      sec.appendChild(more);
+    }
+    if (noteText(block.note)) { sec.appendChild(put(h('p', 'meta'), sourceBadge('roadie_interpretation'), document.createTextNode(' ' + noteText(block.note)))); }
+    return sec;
+  }
+
+  function sponsorsSection(plan) {
+    var sec = section('Sponsor candidates', 'qloo_result');
+    var block = obj(plan.sponsor_candidates);
+    var items = arr(block.items).map(obj);
+    sec.appendChild(h('p', 'lede', 'Brands with audience overlap: audience overlap, not sponsorship intent. Names only; treat them as brands to research.'));
+    if (items.length === 0) {
+      sec.appendChild(h('p', 'meta', 'Qloo returned no brands with audience overlap in this data.'));
+    } else {
+      var chips = h('ul', 'chips');
+      items.forEach(function (b) { chips.appendChild(h('li', null, str(b.name))); });
+      sec.appendChild(chips);
+    }
+    if (noteText(block.limits)) { sec.appendChild(h('p', 'meta', noteText(block.limits))); }
+    return sec;
+  }
+
+  function limitsPanel() {
+    var box = h('section', 'panel');
+    box.appendChild(h('h3', null, 'What this data cannot tell you'));
+    var ul = h('ul', 'plain');
+    [
+      'Qloo gives audience affinity, not capacity, booking policy, availability or terms.',
+      'Qloo does not tell stand-up rooms from improv or sketch rooms, and some listed venues are general venues.',
+      'Affinity describes aggregate audiences, not individuals. Cities in the same tier are near-ties.',
+      'Brand results show audience overlap, not sponsorship intent.'
+    ].forEach(function (t) { ul.appendChild(h('li', null, t)); });
+    box.appendChild(ul);
+    return box;
+  }
+
+  // ---- live search --------------------------------------------------------------------------------------
+  var busy = false;
+  var stream = null;
+
+  function setBusy(on) {
+    busy = on;
+    $('live-go').disabled = on;
+    $('live-name').disabled = on;
+  }
+
+  function liveProblem(text) {
+    var box = $('live-problem');
+    clear(box);
+    if (text) { box.appendChild(problem(text)); }
+  }
+
+  function resetLive() {
+    liveProblem('');
+    $('live-candidates').hidden = true;
+    $('live-progress').hidden = true;
+    clear($('cand-list'));
+    clear($('live-steps'));
+  }
+
+  function onSearch(ev) {
+    ev.preventDefault();
+    if (busy) { return; }
+    var name = $('live-name').value.trim();
+    resetLive();
+    if (!NAME_RE.test(name)) {
+      liveProblem('Enter a comedian name of 2 to 60 characters, using letters, spaces, periods, apostrophes or hyphens.');
+      return;
+    }
+    setBusy(true);
+    postJSON('live/search', { name: name }).then(function (res) {
+      setBusy(false);
+      if (!res.ok || !Array.isArray(res.body)) { liveProblem(errorSentence(res)); return; }
+      if (res.body.length === 0) { liveProblem('No matches were found for that name. Check the spelling, or try the full name.'); return; }
+      showCandidates(res.body);
+    }, function () {
+      setBusy(false);
+      liveProblem('Qloo or the server could not be reached right now. The demo gallery is still available.');
+    });
+  }
+
+  function showCandidates(list) {
+    var ul = $('cand-list');
+    clear(ul);
+    list.slice(0, 5).forEach(function (c) {
+      var o = obj(c);
+      var li = h('li');
+      li.appendChild(put(h('p'), h('span', 'who', str(o.name) || 'Unnamed')));
+      if (str(o.description)) { li.appendChild(h('p', 'meta', o.description)); }
+      var pop = typeof o.popularity === 'number' ? 'Qloo popularity: ' + o.popularity.toFixed(2) + ' (0 to 1)' : 'Qloo popularity: not given';
+      li.appendChild(h('p', 'meta', pop));
+      var id = str(o.entity_id);
+      var btn = h('button', 'btn small', 'Plan a tour for this one');
+      btn.type = 'button';
+      btn.addEventListener('click', function () { startPlan(id); });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+    $('live-candidates').hidden = false;
+    $('cand-h').tabIndex = -1;
+    $('cand-h').focus();
+  }
+
+  function addStep(source, text) {
+    var li = h('li');
+    var badge = sourceBadge(source);
+    put(li, badge, badge ? document.createTextNode(' ') : null, document.createTextNode(text));
+    $('live-steps').appendChild(li);
+  }
+
+  function startPlan(entityId) {
+    if (busy) { return; }
+    liveProblem('');
+    setBusy(true);
+    clear($('live-steps'));
+    $('live-candidates').hidden = true;
+    $('live-progress').hidden = false;
+    addStep(null, 'Starting the run...');
+    postJSON('live/plan', { entity_id: entityId }).then(function (res) {
+      var jobId = res.ok && res.body ? str(res.body.job_id) : '';
+      if (!jobId || !JOB_RE.test(jobId)) { fail(errorSentence(res)); return; }
+      follow(jobId);
+    }, function () {
+      fail('Qloo or the server could not be reached right now. The demo gallery is still available.');
+    });
+  }
+
+  function fail(text) {
+    setBusy(false);
+    if (stream) { stream.close(); stream = null; }
+    $('live-progress').hidden = true;
+    liveProblem(text);
+  }
+
+  function follow(jobId) {
+    var finished = false;
+    var es = new EventSource('/api/live/stream/' + jobId);
+    stream = es;
+    function parse(ev) {
+      try { return obj(JSON.parse(ev.data)); } catch (e) { return {}; }
+    }
+    es.addEventListener('started', function (ev) {
+      var d = parse(ev);
+      var calls = typeof d.calls === 'number' ? ' (' + plural(d.calls, 'call', 'calls') + ')' : '';
+      addStep('qloo_result', 'Asking Qloo: ' + (str(d.label) || 'more data') + calls);
+    });
+    es.addEventListener('step', function (ev) {
+      var d = parse(ev);
+      addStep(str(d.source), str(d.summary) || str(d.step));
+    });
+    es.addEventListener('result', function (ev) {
+      finished = true;
+      es.close();
+      stream = null;
+      setBusy(false);
+      $('live-progress').hidden = true;
+      var d = parse(ev);
+      if (!d.plan) { liveProblem(GENERIC_ERROR); return; }
+      showPlan(d, 'live');
+    });
+    es.addEventListener('error', function (ev) {
+      if (finished) { return; }
+      finished = true;
+      es.close();
+      stream = null;
+      if (ev && typeof ev.data === 'string' && ev.data) {
+        fail(errorSentence({ body: parse(ev) }));
+      } else {
+        fail('The live connection was interrupted. Please try again. The demo gallery is still available.');
+      }
+    });
+  }
+
+  // ---- start up -----------------------------------------------------------------------------------------
+  function liveStatusLine(health) {
+    var el = $('live-status');
+    if (!health.live_enabled) {
+      el.textContent = 'Live search is currently off or has ended on this server.';
+    } else {
+      var left = typeof health.live_budget_remaining === 'number' ? ' Live runs left in the current budget: ' + health.live_budget_remaining + '.' : '';
+      el.textContent = 'A live run takes about one to two minutes, and steps appear as they finish.' + left;
+    }
+  }
+
+  function start(failText) {
+    var box = $('gallery-status');
+    box.textContent = 'Loading the gallery...';
+    wake().then(function (health) {
+      liveStatusLine(health);
+      return loadGallery();
+    }, function () {
+      clear(box);
+      box.appendChild(problem(failText));
+      var retry = h('button', 'btn secondary small', 'Try again');
+      retry.type = 'button';
+      retry.addEventListener('click', function () { start('The server still did not answer. Please reload this page in a minute or two.'); });
+      box.appendChild(retry);
+    });
+  }
+
+  function boot() {
+    $('back').addEventListener('click', function () {
+      showView(false);
+      if (lastHomeFocus && typeof lastHomeFocus.focus === 'function') { lastHomeFocus.focus(); }
+    });
+    $('live-form').addEventListener('submit', onSearch);
+    start('The server did not wake up in time. Please try again in a minute or two.');
+  }
+  // Test hook: the node tests set window.__ROADIE_TEST__ and get the pure helpers and renderers; the page never does.
+  if (window.__ROADIE_TEST__) {
+    window.__ROADIE_TEST__.exports = {
+      tierSummary: tierSummary, needsTierBadge: needsTierBadge, galleryComicsText: galleryComicsText,
+      cityPreview: cityPreview, cleanCopy: cleanCopy, renderPlan: renderPlan, galleryCard: galleryCard
+    };
+  } else {
+    boot();
+  }
+})();
+</script>
+</body>
+</html>

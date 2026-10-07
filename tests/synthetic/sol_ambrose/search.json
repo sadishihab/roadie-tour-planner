@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Sol Ambrose",
+    "entity_id": "00000000-0000-4000-8000-000000000186",
+    "popularity": 0.4,
+    "properties": {
+      "short_description": "Fictional landscape painter"
+    }
+  },
+  {
+    "name": "Sol Ambrose",
+    "entity_id": "00000000-0000-4000-8000-000000000185",
+    "popularity": 0.7,
+    "properties": {
+      "short_description": "Fictional stand-up comedian"
+    }
+  },
+  {
+    "name": "Sol Amber",
+    "entity_id": "00000000-0000-4000-8000-000000000187",
+    "popularity": 0.91,
+    "properties": {
+      "short_description": "Fictional pop singer"
+    }
+  }
+]

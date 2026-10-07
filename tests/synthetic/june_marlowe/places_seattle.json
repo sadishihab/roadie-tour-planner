@@ -1,0 +1,74 @@
+[
+  {
+    "name": "The Foghorn Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000079",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Paper Moon Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000080",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000081",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Seattle, WA; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  }
+]

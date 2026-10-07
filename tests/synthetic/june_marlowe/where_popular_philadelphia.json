@@ -1,0 +1,127 @@
+{
+  "schema_version": "synthetic-1",
+  "operation": "where_popular",
+  "status": "ok",
+  "interpretation": {
+    "entity": {
+      "input": "00000000-0000-4000-8000-000000000001",
+      "entityId": "00000000-0000-4000-8000-000000000001",
+      "name": "June Marlowe",
+      "type": "urn:entity:person",
+      "match": "identifier"
+    },
+    "within": "Philadelphia, PA"
+  },
+  "results": [
+    {
+      "location": {
+        "latitude": 39.95,
+        "longitude": -75.17,
+        "geohash": "synth000"
+      },
+      "query": {
+        "affinity": 0.986,
+        "popularity": 0.86
+      }
+    },
+    {
+      "location": {
+        "latitude": 39.96,
+        "longitude": -75.18,
+        "geohash": "synth001"
+      },
+      "query": {
+        "affinity": 0.978,
+        "popularity": 0.82
+      }
+    },
+    {
+      "location": {
+        "latitude": 39.97,
+        "longitude": -75.19,
+        "geohash": "synth002"
+      },
+      "query": {
+        "affinity": 0.985,
+        "popularity": 0.855
+      }
+    },
+    {
+      "location": {
+        "latitude": 39.98,
+        "longitude": -75.2,
+        "geohash": "synth003"
+      },
+      "query": {
+        "affinity": 0.979,
+        "popularity": 0.825
+      }
+    },
+    {
+      "location": {
+        "latitude": 39.99,
+        "longitude": -75.21,
+        "geohash": "synth004"
+      },
+      "query": {
+        "affinity": 0.984,
+        "popularity": 0.85
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.0,
+        "longitude": -75.22,
+        "geohash": "synth005"
+      },
+      "query": {
+        "affinity": 0.98,
+        "popularity": 0.83
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.01,
+        "longitude": -75.23,
+        "geohash": "synth006"
+      },
+      "query": {
+        "affinity": 0.983,
+        "popularity": 0.845
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.02,
+        "longitude": -75.24,
+        "geohash": "synth007"
+      },
+      "query": {
+        "affinity": 0.981,
+        "popularity": 0.835
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.03,
+        "longitude": -75.25,
+        "geohash": "synth008"
+      },
+      "query": {
+        "affinity": 0.982,
+        "popularity": 0.84
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.04,
+        "longitude": -75.26,
+        "geohash": "synth009"
+      },
+      "query": {
+        "affinity": 0.982,
+        "popularity": 0.84
+      }
+    }
+  ]
+}

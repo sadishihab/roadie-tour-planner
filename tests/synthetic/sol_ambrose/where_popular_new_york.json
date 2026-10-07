@@ -1,0 +1,127 @@
+{
+  "schema_version": "synthetic-1",
+  "operation": "where_popular",
+  "status": "ok",
+  "interpretation": {
+    "entity": {
+      "input": "00000000-0000-4000-8000-000000000185",
+      "entityId": "00000000-0000-4000-8000-000000000185",
+      "name": "Sol Ambrose",
+      "type": "urn:entity:person",
+      "match": "identifier"
+    },
+    "within": "New York, NY"
+  },
+  "results": [
+    {
+      "location": {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "geohash": "synth000"
+      },
+      "query": {
+        "affinity": 1.0005,
+        "popularity": 0.978
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.72,
+        "longitude": -74.02,
+        "geohash": "synth001"
+      },
+      "query": {
+        "affinity": 0.9925,
+        "popularity": 0.938
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.73,
+        "longitude": -74.03,
+        "geohash": "synth002"
+      },
+      "query": {
+        "affinity": 0.9995,
+        "popularity": 0.973
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.74,
+        "longitude": -74.04,
+        "geohash": "synth003"
+      },
+      "query": {
+        "affinity": 0.9935,
+        "popularity": 0.943
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.75,
+        "longitude": -74.05,
+        "geohash": "synth004"
+      },
+      "query": {
+        "affinity": 0.9985,
+        "popularity": 0.968
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.76,
+        "longitude": -74.06,
+        "geohash": "synth005"
+      },
+      "query": {
+        "affinity": 0.9945,
+        "popularity": 0.948
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.77,
+        "longitude": -74.07,
+        "geohash": "synth006"
+      },
+      "query": {
+        "affinity": 0.9975,
+        "popularity": 0.963
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.78,
+        "longitude": -74.08,
+        "geohash": "synth007"
+      },
+      "query": {
+        "affinity": 0.9955,
+        "popularity": 0.953
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.79,
+        "longitude": -74.09,
+        "geohash": "synth008"
+      },
+      "query": {
+        "affinity": 0.9965,
+        "popularity": 0.958
+      }
+    },
+    {
+      "location": {
+        "latitude": 40.8,
+        "longitude": -74.1,
+        "geohash": "synth009"
+      },
+      "query": {
+        "affinity": 0.9965,
+        "popularity": 0.958
+      }
+    }
+  ]
+}

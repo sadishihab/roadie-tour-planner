@@ -1,0 +1,146 @@
+[
+  {
+    "name": "The Marble Owl Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000055",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Crooked Spoon Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000056",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.87,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Blue Thimble Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000057",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.82,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Tin Lantern Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000058",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Velvet Anvil Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000059",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Foghorn Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000060",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  }
+]

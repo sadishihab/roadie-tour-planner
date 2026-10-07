@@ -1,0 +1,146 @@
+[
+  {
+    "name": "The Tin Lantern Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000270",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Velvet Anvil Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000271",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Foghorn Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000272",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Paper Moon Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000273",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000274",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Lazy Comet Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000275",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Denver, CO; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  }
+]

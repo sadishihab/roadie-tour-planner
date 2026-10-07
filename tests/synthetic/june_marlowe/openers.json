@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Wren Alderfoot",
+    "entity_id": "00000000-0000-4000-8000-000000000003",
+    "type": "urn:entity",
+    "popularity": 0.57,
+    "query": {
+      "affinity": 0.962
+    }
+  },
+  {
+    "name": "Tobias Quillfeather",
+    "entity_id": "00000000-0000-4000-8000-000000000004",
+    "type": "urn:entity",
+    "popularity": 0.53,
+    "query": {
+      "affinity": 0.958
+    }
+  },
+  {
+    "name": "Marnie Fenwick-Doyle",
+    "entity_id": "00000000-0000-4000-8000-000000000005",
+    "type": "urn:entity",
+    "popularity": 0.8,
+    "query": {
+      "affinity": 0.955
+    }
+  },
+  {
+    "name": "Dax Holloway-Pike",
+    "entity_id": "00000000-0000-4000-8000-000000000006",
+    "type": "urn:entity",
+    "popularity": 0.2,
+    "query": {
+      "affinity": 0.951
+    }
+  },
+  {
+    "name": "Odalys Brundle",
+    "entity_id": "00000000-0000-4000-8000-000000000007",
+    "type": "urn:entity",
+    "popularity": 0.64,
+    "query": {
+      "affinity": 0.949
+    }
+  },
+  {
+    "name": "Cormac Ellery-Voss",
+    "entity_id": "00000000-0000-4000-8000-000000000008",
+    "type": "urn:entity",
+    "popularity": 0.45,
+    "query": {
+      "affinity": 0.947
+    }
+  },
+  {
+    "name": "Pilar Mondragon-Ash",
+    "entity_id": "00000000-0000-4000-8000-000000000009",
+    "type": "urn:entity",
+    "popularity": 0.56,
+    "query": {
+      "affinity": 0.944
+    }
+  },
+  {
+    "name": "Ignatius Barrow",
+    "entity_id": "00000000-0000-4000-8000-000000000010",
+    "type": "urn:entity",
+    "popularity": 0.9,
+    "query": {
+      "affinity": 0.94
+    }
+  },
+  {
+    "name": "Saffron Teague",
+    "entity_id": "00000000-0000-4000-8000-000000000011",
+    "type": "urn:entity",
+    "popularity": 0.5,
+    "query": {
+      "affinity": 0.936
+    }
+  },
+  {
+    "name": "Lyle Pennywhistle",
+    "entity_id": "00000000-0000-4000-8000-000000000012",
+    "type": "urn:entity",
+    "popularity": 0.58,
+    "query": {
+      "affinity": 0.931
+    }
+  }
+]

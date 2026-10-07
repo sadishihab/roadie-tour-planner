@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Elowen Satterthwaite",
+    "entity_id": "00000000-0000-4000-8000-000000000188",
+    "type": "urn:entity",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.97
+    }
+  },
+  {
+    "name": "Hector Vandermeer",
+    "entity_id": "00000000-0000-4000-8000-000000000189",
+    "type": "urn:entity",
+    "popularity": 0.86,
+    "query": {
+      "affinity": 0.969
+    }
+  },
+  {
+    "name": "Nadia Prewitt-Lowe",
+    "entity_id": "00000000-0000-4000-8000-000000000190",
+    "type": "urn:entity",
+    "popularity": 0.66,
+    "query": {
+      "affinity": 0.966
+    }
+  },
+  {
+    "name": "Cassius Ferndale",
+    "entity_id": "00000000-0000-4000-8000-000000000191",
+    "type": "urn:entity",
+    "popularity": 0.95,
+    "query": {
+      "affinity": 0.962
+    }
+  },
+  {
+    "name": "Imogen Blackwater",
+    "entity_id": "00000000-0000-4000-8000-000000000192",
+    "type": "urn:entity",
+    "popularity": 0.5,
+    "query": {
+      "affinity": 0.96
+    }
+  },
+  {
+    "name": "Rupert Holloway",
+    "entity_id": "00000000-0000-4000-8000-000000000193",
+    "type": "urn:entity",
+    "popularity": 0.69,
+    "query": {
+      "affinity": 0.957
+    }
+  },
+  {
+    "name": "Tamsin Reddingote",
+    "entity_id": "00000000-0000-4000-8000-000000000194",
+    "type": "urn:entity",
+    "popularity": 0.78,
+    "query": {
+      "affinity": 0.955
+    }
+  },
+  {
+    "name": "Octavia Lindqvist",
+    "entity_id": "00000000-0000-4000-8000-000000000195",
+    "type": "urn:entity",
+    "popularity": 0.3,
+    "query": {
+      "affinity": 0.951
+    }
+  },
+  {
+    "name": "Barnaby Quillon",
+    "entity_id": "00000000-0000-4000-8000-000000000196",
+    "type": "urn:entity",
+    "popularity": 0.71,
+    "query": {
+      "affinity": 0.948
+    }
+  },
+  {
+    "name": "Leopold Ashgrove",
+    "entity_id": "00000000-0000-4000-8000-000000000197",
+    "type": "urn:entity",
+    "popularity": 0.88,
+    "query": {
+      "affinity": 0.944
+    }
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "name": "The Blue Thimble Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000161",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.82,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Tin Lantern Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000162",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.77,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Velvet Anvil Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000163",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.72,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  },
+  {
+    "name": "The Foghorn Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000164",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.67,
+    "query": {
+      "affinity": 0.864
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Paper Moon Stage House",
+    "entity_id": "00000000-0000-4000-8000-000000000165",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.62,
+    "query": {
+      "affinity": 0.852
+    },
+    "properties": {
+      "short_description": "Invented variety venue in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Copper Kettle Mic Hall",
+    "entity_id": "00000000-0000-4000-8000-000000000166",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.84
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Dallas, TX; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  }
+]

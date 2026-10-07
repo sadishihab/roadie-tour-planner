@@ -1,0 +1,74 @@
+[
+  {
+    "name": "The Gilded Pigeon Laugh Loft",
+    "entity_id": "00000000-0000-4000-8000-000000000246",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.97,
+    "query": {
+      "affinity": 0.9
+    },
+    "properties": {
+      "short_description": "Invented stand-up room in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Table seating"
+      },
+      {
+        "name": "Accepts reservations"
+      }
+    ]
+  },
+  {
+    "name": "The Marble Owl Punchline Cellar",
+    "entity_id": "00000000-0000-4000-8000-000000000247",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.92,
+    "query": {
+      "affinity": 0.888
+    },
+    "properties": {
+      "short_description": "Invented improv and sketch theater in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Historic"
+      },
+      {
+        "name": "Destination"
+      }
+    ]
+  },
+  {
+    "name": "The Crooked Spoon Comedy Room",
+    "entity_id": "00000000-0000-4000-8000-000000000248",
+    "type": "urn:entity",
+    "subtype": "urn:entity:place",
+    "popularity": 0.87,
+    "query": {
+      "affinity": 0.876
+    },
+    "properties": {
+      "short_description": "Invented comedy club in Washington, DC; synthetic test data."
+    },
+    "tags": [
+      {
+        "name": "Comedy club"
+      },
+      {
+        "name": "Late night"
+      },
+      {
+        "name": "Casual"
+      }
+    ]
+  }
+]
