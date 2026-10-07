@@ -83,7 +83,7 @@ One static file: inline CSS and JavaScript, no framework, no build, same-origin 
   buttons.
 - "Qloo result" marks only what Qloo returned; peer, bigger act and smaller act use the dashed "Roadie reading" style.
   Internal field names are never shown.
-- The optional live search streams steps over EventSource and shows the same plan view with template narration. When `/api/health` says `live_enabled` is false (the case on the hosted demo), the page hides the form and shows one calm notice instead (not the Problem label). A
+- The optional live search streams steps over EventSource and shows the same plan view with template narration. When `/api/health` says `live_enabled` is false (live off by configuration, or ended), the page hides the form and shows one calm notice instead (not the Problem label): one sentence when `live_ended` is true (`ROADIE_LIVE_UNTIL` passed) and another when live is switched off by configuration. Live plans show one notice at the top of the comics section that the comedian check was not run (no per-person tags); the template narrator then says "Comic identification was not run for this live plan, so no comic is suggested." A
   sleeping host gets a "Waking the server" notice after 4 s and `/api/health` is retried for up to 90 s.
 - Every API string is inserted with `textContent` or text nodes, never `innerHTML` (a test scans for it); attributes are
   never built from API strings. Colors and fonts are CSS variables at the top.
@@ -92,20 +92,21 @@ One static file: inline CSS and JavaScript, no framework, no build, same-origin 
 
 ## Known limits
 Measured facts about live mode, stated as measured:
-- (a) A full live run took 133 seconds with serial calls in a container limited to 0.5 CPU and 512 MB.
-- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 seconds even when run alone,
-  apparently mostly Node start-up (a lone search took as long as a lone where_popular). That is longer than the client's
-  30 second per-call timeout. A live plan there hit the 20-call safety cap and stopped with a clean message; live search
-  (one call) did work.
-- (c) Therefore the hosted demo runs with `ROADIE_LIVE=0` and the gallery is the demo. Live mode works on a host with
-  enough CPU and is unproven below 0.5 CPU.
-- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
-
-- (e) Persistent mode (`ROADIE_QLOO_MODE=persistent`, the default when live is on) keeps ONE long-running `qloo mcp`
-  process, so Node starts once. Measured with a probe at 0.1 CPU: about 42 seconds to start once, then 0.6 to 4 seconds
-  per call (`qloo_where_popular` 1 to 4 s, `qloo_recommend` 0.6 to 4 s). **Not verified:** a full live plan through the
-  persistent harness, and behavior after a harness crash on a real host (the restart logic is tested only against a fake
-  child process). Person search by name stays on the one-off `qloo` call, because the verified tool list names no
-  person-search tool; at 0.1 CPU that one call may still be slow (its timeout is 90 seconds, no retry).
-- Stopping rule: if a full live plan does not finish in about two minutes on Render's free instance, live mode stays
-  off (`ROADIE_LIVE=0`).
+- (a) With one call per process (`ROADIE_QLOO_MODE=oneshot`) a single qloo call took about 47 seconds at 0.1 CPU, mostly
+  Node start-up, so live plans failed on Render's free instance (a plan hit the 20-call cap). A full live run with serial
+  one-off calls took 133 seconds in a container limited to 0.5 CPU and 512 MB.
+- (b) With the persistent harness (`ROADIE_QLOO_MODE=persistent`, now the default) one long-running `qloo mcp` process
+  starts once (about 40 to 45 seconds alone, about 105 seconds locally at 0.1 CPU while the app also starts), after which
+  calls took 0.6 to 4 seconds each.
+- (c) At 0.1 CPU in a local container a full live plan took 28.7 seconds with no warnings and 0 restarts after a
+  104.6 second warm-up, and the search (still a one-off call) took 46.8 seconds.
+- (d) On Render's free instance, once the harness was ready, the search took 16.9 seconds and a full live plan took
+  15.4 seconds, with no warnings, six cities.
+- (e) The hosted demo runs with `ROADIE_LIVE=1`, `ROADIE_QLOO_MODE=persistent` and `ROADIE_LIVE_UNTIL=2026-11-16`. The stopping
+  rule (live stays off unless a full live plan finishes in about two minutes on the free instance) was applied and passed
+  with the measurements above.
+- (f) Not measured: a cold start of the Render free instance with live on (container wake-up plus harness warm-up),
+  behavior after a harness crash on a real host, and sustained load. Until the harness is ready, live search and plan
+  answer `503 live_starting`; the pre-built gallery plans work throughout.
+- (g) The hackathon key is deactivated after Nov 16, so live mode ends then by design; the gallery keeps working.
+- Live mode is still off by default in the code (`ROADIE_LIVE` unset) and answers `503 {"error": "live_disabled"}` when off.

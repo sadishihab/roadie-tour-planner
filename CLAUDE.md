@@ -87,7 +87,7 @@ If the app would work the same without Qloo, it is wrong.
   prints counts only (and tells apart a missing, empty and unreadable secrets folder; unreadable means it exists but this user cannot list it, and the app still starts), exports QLOO_BASE_URL and QLOO_TRUSTED_BASE_URL (default the hackathon URL), runs
   `qloo config set base-url` without the key in its environment, then starts uvicorn. The key comes only from the
   QLOO_API_KEY environment variable. /api/health also returns gallery_count (0 = secret files not found; the page
-  then says the gallery is unavailable). The free instance is ephemeral: live_budget.json and the cache reset on restart. The hosted demo runs with ROADIE_LIVE=0 (render.yaml); the gallery is the demo (see Known limits).
+  then says the gallery is unavailable). The free instance is ephemeral: live_budget.json and the cache reset on restart. The hosted demo runs with ROADIE_LIVE=1, ROADIE_QLOO_MODE=persistent and ROADIE_LIVE_UNTIL=2026-11-16 (render.yaml), next to the gallery (see Known limits).
 
 ## Persistent harness (backend/roadie/mcp_client.py)
 - PersistentHarness owns ONE `qloo mcp` child (usual environment: QLOO_API_KEY, QLOO_BASE_URL, QLOO_TRUSTED_BASE_URL; stderr discarded). Messages
@@ -137,17 +137,19 @@ If the app would work the same without Qloo, it is wrong.
   raw Qloo output, a key or an environment value in a response or a log line. Qloo text is length-capped.
 
 ## Known limits
-- (a) A full live run took 133 s with serial calls in a container limited to 0.5 CPU and 512 MB.
-- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 s even alone, apparently mostly Node
-  start-up (a lone search took as long as a lone where_popular), longer than the client's 30 s per-call timeout; a live
-  plan there hit the 20-call cap and stopped with a clean message, while live search (one call) did work.
-- (c) So the hosted demo runs with ROADIE_LIVE=0 and the gallery is the demo; live mode works on a host with enough CPU
-  and is unproven below 0.5 CPU. When /api/health says live_enabled is false the page hides the form and shows a calm notice.
-- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
-- (e) Persistent mode (ROADIE_QLOO_MODE=persistent, the default when live is on) keeps ONE `qloo mcp` process so Node starts once. Measured
-  with a probe at 0.1 CPU: about 42 s to start once, then 0.6 to 4 s per call. NOT verified: a full live plan through the persistent
-  harness, and behavior after a harness crash on a real host. Stopping rule: if a full live plan does not finish in about two minutes
-  on Render's free instance, live mode stays off (ROADIE_LIVE=0).
+- (a) With one call per process (ROADIE_QLOO_MODE=oneshot) a single qloo call took about 47 s at 0.1 CPU, mostly Node start-up, so live
+  plans failed on Render's free instance (a plan hit the 20-call cap). A serial one-off run took 133 s in a 0.5 CPU, 512 MB container.
+- (b) With the persistent harness (ROADIE_QLOO_MODE=persistent, now the default) one long-running `qloo mcp` process starts once (about 40 to
+  45 s alone, about 105 s locally at 0.1 CPU while the app also starts), after which calls took 0.6 to 4 s each.
+- (c) At 0.1 CPU in a local container a full live plan took 28.7 s with no warnings and 0 restarts after a 104.6 s warm-up; the search (still
+  one-off) took 46.8 s.
+- (d) On Render's free instance, once the harness was ready, the search took 16.9 s and a full live plan took 15.4 s, no warnings, six cities.
+- (e) The hosted demo runs with ROADIE_LIVE=1, ROADIE_QLOO_MODE=persistent and ROADIE_LIVE_UNTIL=2026-11-16. The stopping rule (live stays off
+  unless a full live plan finishes in about two minutes on the free instance) was applied and passed, with the measurements above. When
+  /api/health says live_enabled is false the page hides the form and shows a calm notice.
+- (f) NOT measured: a cold start of the Render free instance with live on (container wake-up plus harness warm-up), behavior after a harness
+  crash on a real host, and sustained load.
+- (g) The hackathon key is deactivated after Nov 16, so live mode ends then by design; the gallery keeps working.
 
 ## Dropped sections
 The plan has no vibe, shared-audience or trends section. They were cut because entity_tags and

@@ -4,7 +4,7 @@ An AI tour planner for touring stand-up comedians: give it a comedian's name and
 
 **Live demo:** https://roadie-tour-planner.onrender.com
 
-The hosted demo shows the five pre-built plans. Live search is switched off there because the free host is too slow for it; see [docs/DEPLOY.md](docs/DEPLOY.md#known-limits) for why. Live mode is still in the code and works on a host with enough CPU, and it ends anyway when the hackathon key is deactivated on Nov 16.
+The hosted demo has five pre-built plans and a working live search. The live search is an optional extra that ends on Nov 16, when the hackathon key is deactivated; the pre-built plans keep working. After the server starts or wakes there is a one-time warm-up of one to two minutes before live search answers. Live plans do not run the comedian check, so they suggest no comic. See [docs/DEPLOY.md](docs/DEPLOY.md#known-limits) for the measurements.
 
 ## Screenshots
 These screenshots use invented synthetic data; the hosted demo shows the pre-built plans, which are based on real Qloo data.
@@ -52,7 +52,7 @@ Tests (synthetic data only, no network):
 ```
 cd backend && python -m pytest
 ```
-Live search is off unless `ROADIE_LIVE=1` and the `qloo` CLI is set up with a key; it is off on the hosted demo ([docs/DEPLOY.md](docs/DEPLOY.md#known-limits)). When on, it uses one long-running `qloo mcp` process by default (`ROADIE_QLOO_MODE=persistent`; `oneshot` is the old per-call behavior), so the first minute after start-up answers "warming up"; the persistent mode is measured at 0.1 CPU with a probe but a full live plan through it is not yet verified, and person search by name still uses a one-off call. See [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
+Live search is off by default and is on only with `ROADIE_LIVE=1` and the `qloo` CLI set up with a key; the hosted demo runs with it on ([docs/DEPLOY.md](docs/DEPLOY.md#known-limits)). It uses one long-running `qloo mcp` process by default (`ROADIE_QLOO_MODE=persistent`; `oneshot` is the old one-call-per-process behavior), so for the first one to two minutes after start-up it answers "warming up". Person search by name still uses a one-off call. See [docs/API.md](docs/API.md). To deploy as a Docker image, see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Data handling
 Qloo's organizers do not allow Qloo response data in a public repository, so this repository contains code and synthetic test data only. Real responses and the gallery built from them live in a private folder (`ROADIE_DATA_DIR`) outside version control, and tests use invented comedians, venues, brands and ids. Details and the guard tests are in [docs/DATA.md](docs/DATA.md).

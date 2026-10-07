@@ -9,8 +9,9 @@ server"), and the filesystem is ephemeral. Consequences: the gallery files are c
 and the live monthly counter (`live_budget.json`) and the 24 hour cache reset when the instance restarts. The
 per-day, per-hour and per-run limits still bound spend, and the Qloo key itself is capped by the organizers.
 
-**The hosted demo runs with live mode off** (`ROADIE_LIVE=0`): the free instance is too slow for the `qloo` harness, so
-the five pre-built gallery plans are the demo. See [Known limits](#known-limits).
+**The hosted demo has the five pre-built gallery plans and a live search** (`ROADIE_LIVE=1`, `ROADIE_QLOO_MODE=persistent`,
+`ROADIE_LIVE_UNTIL=2026-11-16`). Live search is an optional extra that ends on Nov 16; after the server starts or wakes it
+needs a one-time warm-up of one to two minutes. See [Known limits](#known-limits).
 
 ## Render steps
 
@@ -22,8 +23,8 @@ the five pre-built gallery plans are the demo. See [Known limits](#known-limits)
    | Variable | Value |
    |---|---|
    | `QLOO_API_KEY` | your hackathon key, typed into the dashboard only (the blueprint declares it with `sync: false`) |
-   | `ROADIE_LIVE` | `0` on the free instance (see Known limits); switch to `1` only after persistent mode has been shown to finish a full live plan there (stopping rule below), or on a host with enough CPU |
-   | `ROADIE_QLOO_MODE` | optional; `persistent` (default, one long-running `qloo mcp` process) or `oneshot` (one process per call) |
+   | `ROADIE_LIVE` | `1` for the hosted demo (see Known limits); unset or `0` runs the gallery only |
+   | `ROADIE_QLOO_MODE` | `persistent` (default, one long-running `qloo mcp` process); `oneshot` (one process per call) was too slow on the free instance |
    | `ROADIE_LIVE_UNTIL` | `2026-11-16` |
    | `ROADIE_GLOBAL_SEARCHES_PER_DAY` | `50` |
    | `ROADIE_TRUST_PROXY` | `1` (Render puts a proxy in front) |
@@ -36,8 +37,9 @@ the five pre-built gallery plans are the demo. See [Known limits](#known-limits)
    these files. Assumption: for Docker services Render exposes Secret Files under `/etc/secrets/`. The container reads
    that folder by default; if your service shows them elsewhere set `ROADIE_SECRETS_DIR` to that path.
 5. Deploy. The log shows one line: `roadie: gallery files copied: N` (a count, never file names).
-6. Check `https://<your-service>.onrender.com/api/health`. Expect `status: ok`, `live_enabled: false`,
-   `live_budget_remaining: null` and `gallery_count: 5` (with `ROADIE_LIVE=1` on a capable host: `live_enabled: true` and a number). `gallery_count: 0` means the Secret Files were not found
+6. Check `https://<your-service>.onrender.com/api/health`. Expect `status: ok`, `live_enabled: true`,
+   `gallery_count: 5` and `live_status: starting` until the harness is ready, then `ready` (with `ROADIE_LIVE` unset: `live_enabled: false`
+   and `live_budget_remaining: null`). `gallery_count: 0` means the Secret Files were not found
    (the page then says the gallery is unavailable; nothing crashes). Then open `/` and the gallery.
 
 The key is read from `QLOO_API_KEY` at run time only. It is never written to disk by the entrypoint, never printed and
@@ -80,23 +82,24 @@ Assumption: Render exposes Secret Files to Docker services under `/etc/secrets/`
 
 ## Known limits
 Measured facts about live mode, stated as measured:
-- (a) A full live run took 133 seconds with serial calls in a container limited to 0.5 CPU and 512 MB.
-- (b) On Render's free instance (0.1 CPU, 512 MB) a single qloo call took about 47 seconds even when run alone,
-  apparently mostly Node start-up (a lone search took as long as a lone where_popular). That is longer than the client's
-  30 second per-call timeout. A live plan there hit the 20-call safety cap and stopped with a clean message; live search
-  (one call) did work.
-- (c) Therefore the hosted demo runs with `ROADIE_LIVE=0` and the gallery is the demo. Live mode works on a host with
-  enough CPU and is unproven below 0.5 CPU.
-- (d) The hackathon key is deactivated after Nov 16, so live mode ends then anyway.
-
-- (e) Persistent mode (`ROADIE_QLOO_MODE=persistent`, the default when live is on) keeps ONE long-running `qloo mcp`
-  process, so Node starts once. Measured with a probe at 0.1 CPU: about 42 seconds to start once, then 0.6 to 4 seconds
-  per call (`qloo_where_popular` 1 to 4 s, `qloo_recommend` 0.6 to 4 s). **Not verified:** a full live plan through the
-  persistent harness, and behavior after a harness crash on a real host (the restart logic is tested only against a fake
-  child process). Person search by name stays on the one-off `qloo` call, because the verified tool list names no
-  person-search tool; at 0.1 CPU that one call may still be slow (its timeout is 90 seconds, no retry).
-- Stopping rule: if a full live plan does not finish in about two minutes on Render's free instance, live mode stays
-  off (`ROADIE_LIVE=0`).
+- (a) With one call per process (`ROADIE_QLOO_MODE=oneshot`) a single qloo call took about 47 seconds at 0.1 CPU, mostly
+  Node start-up, so live plans failed on Render's free instance (a plan hit the 20-call cap). A full live run with serial
+  one-off calls took 133 seconds in a container limited to 0.5 CPU and 512 MB.
+- (b) With the persistent harness (`ROADIE_QLOO_MODE=persistent`, now the default) one long-running `qloo mcp` process
+  starts once (about 40 to 45 seconds alone, about 105 seconds locally at 0.1 CPU while the app also starts), after which
+  calls took 0.6 to 4 seconds each.
+- (c) At 0.1 CPU in a local container a full live plan took 28.7 seconds with no warnings and 0 restarts after a
+  104.6 second warm-up, and the search (still a one-off call) took 46.8 seconds.
+- (d) On Render's free instance, once the harness was ready, the search took 16.9 seconds and a full live plan took
+  15.4 seconds, with no warnings, six cities.
+- (e) The hosted demo runs with `ROADIE_LIVE=1`, `ROADIE_QLOO_MODE=persistent` and `ROADIE_LIVE_UNTIL=2026-11-16`. The stopping
+  rule (live stays off unless a full live plan finishes in about two minutes on the free instance) was applied and passed
+  with the measurements above.
+- (f) Not measured: a cold start of the Render free instance with live on (container wake-up plus harness warm-up),
+  behavior after a harness crash on a real host, and sustained load. Until the harness is ready, live search and plan
+  answer `503 live_starting`; the pre-built gallery plans work throughout.
+- (g) The hackathon key is deactivated after Nov 16, so live mode ends then by design; the gallery keeps working.
+- Live mode is still off by default in the code (`ROADIE_LIVE` unset) and answers `503 {"error": "live_disabled"}` when off.
 
 ## What was verified
 - The image was built and run locally with a 0.5 CPU and 512 MB limit. A real live search and a full live plan ran
@@ -106,9 +109,7 @@ Measured facts about live mode, stated as measured:
   and `trusted_base_url` in the harness config. The harness reads `QLOO_BASE_URL` and `QLOO_TRUSTED_BASE_URL` and trusts
   the endpoint when both name the hackathon URL; the entrypoint sets both as overridable defaults and runs `config set`
   with the key removed from its environment, discarding its output. The package declares Node >= 22.19.
-- Persistent mode, measured with a probe at 0.1 CPU: `qloo mcp` took about 42 seconds to start once, after which calls took
-  0.6 to 4 seconds. Not verified: a full live plan through the persistent harness, and what happens after a harness crash
-  on a real host. With live on, `/api/health` shows `live_ready: false` (`live_status: starting`) until `initialize`
+- Persistent mode: see Known limits (b) to (d) for the measured start-up, search and plan times. With live on, `/api/health` shows `live_ready: false` (`live_status: starting`) until `initialize`
   finishes; live search and plan answer `503 live_starting` meanwhile, and `qloo_unavailable` if the harness gave up.
 - Not yet verified: Render's Secret Files path (assumption above) and Render's proxy hop count (see Notes).
 - The key is read from `QLOO_API_KEY` at run time only; it is never written to disk, printed or logged by Roadie.
@@ -126,8 +127,8 @@ Measured facts about live mode, stated as measured:
   (so hop count 1 is right). If Render adds a hop the count is 2: set `ROADIE_TRUSTED_PROXY_HOPS=2`. Remove the
   temporary logging afterwards. If the check shows every visitor sharing one address, the hop count is too low or the
   header is missing; the per-IP limit then behaves as a second global limit, which is safe but strict.
-- Live runs use `ROADIE_LIVE_WORKERS` concurrent Qloo calls (default 4, maximum 6). A serial run took 133 seconds in the
-  0.5 CPU test; the speedup from workers on a small CPU has not been measured. Setting it to 1 makes runs serial; the
+- Live runs use `ROADIE_LIVE_WORKERS` concurrent Qloo calls (default 4, maximum 6). A serial one-off run took 133 seconds in the
+  0.5 CPU test; the persistent-harness timings are in Known limits. Setting it to 1 makes runs serial; the
   4-per-second pace and the 20-call cap hold either way.
 - The entrypoint log distinguishes three secrets-folder cases: `gallery files copied: N` (readable),
   `... the secrets folder is missing` or `... is empty`, and `the secrets folder exists but is not readable by this user`.

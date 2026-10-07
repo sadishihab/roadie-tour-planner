@@ -12,14 +12,15 @@ services:
     envVars:
       - key: QLOO_API_KEY
         sync: false
-      # Live mode is off on the free instance: a single qloo call took about 47 s there (0.1 CPU,
-      # mostly Node start-up), longer than the 30 s per-call timeout. The gallery is the demo.
-      # See docs/DEPLOY.md, Known limits. Set "1" only on a host with enough CPU, or on this one only
-      # after the persistent mode (ROADIE_QLOO_MODE, default persistent: one long-running `qloo mcp`
-      # process) has been shown to finish a full live plan on the free instance in about two minutes.
-      # Until then it stays "0".
+      # Measured (docs/DEPLOY.md, Known limits): (a) one qloo process per call took about 47 s per call at 0.1 CPU,
+      # so oneshot live plans failed on this instance. (b) The persistent harness starts once (about 40 to 45 s alone,
+      # about 105 s locally at 0.1 CPU) and then calls take 0.6 to 4 s. (c) Locally at 0.1 CPU a full plan took 28.7 s
+      # after the warm-up, the search 46.8 s. (d) Here, once ready, search took 16.9 s and a full plan 15.4 s.
+      # Not measured: a cold start with live on, a harness crash on a real host, sustained load.
       - key: ROADIE_LIVE
-        value: "0"
+        value: "1"
+      - key: ROADIE_QLOO_MODE
+        value: persistent
       - key: ROADIE_LIVE_UNTIL
         value: "2026-11-16"
       - key: ROADIE_GLOBAL_SEARCHES_PER_DAY

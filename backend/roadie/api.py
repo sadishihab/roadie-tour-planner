@@ -218,6 +218,7 @@ def create_app(
         return {
             "status": "ok",
             "live_enabled": on,
+            "live_ended": live_configured and service.ended(),
             "live_ready": status == "ready",
             "live_status": status,
             "live_budget_remaining": service.budget_remaining() if on else None,

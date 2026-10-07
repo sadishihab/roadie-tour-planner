@@ -85,8 +85,13 @@ def test_required_text_is_present():
         assert words in PAGE, words
 
 
+LIVE_TIMING = ("A live plan usually takes under a minute once the server is awake. "
+               "After a period of inactivity the server may need up to two minutes to warm up first.")
+
+
 def test_live_status_says_how_long_a_run_takes_and_that_steps_appear_as_they_finish():
-    assert "A live run takes about one to two minutes, and steps appear as they finish." in SCRIPT
+    assert LIVE_TIMING in SCRIPT
+    assert "one to two minutes" not in SCRIPT
     start = SCRIPT.index("function liveStatusLine")
     body = SCRIPT[start : SCRIPT.index("function start(", start)]
     assert "textContent" in body and "innerHTML" not in body  # still plain text only
@@ -358,14 +363,23 @@ def test_no_identified_people_puts_the_sentence_directly_above_the_collapsed_lis
     assert not set(badge_words(comics)) & set(SIZE_WORDS)
 
 
-def test_null_identification_keeps_the_not_run_wording_and_has_no_size_label(tmp_path, entries):
+LIVE_COMICS_NOTICE = "Live plans do not run the comedian check, so no comic is suggested. Each person is listed as returned by Qloo."
+
+
+def test_null_identification_shows_one_notice_the_not_run_wording_and_has_no_size_label(tmp_path, entries):
     live = comics_plan(entries[JUNE], [person("Fay Live", None, "peer", ""), person("Gus Live", None, "bigger act", "")])
     out = run_harness(tmp_path, {"entries": [{**live, "mode": "live"}]})
     comics = section_named(out["plans"][0], "Comics to bill with")
     words = badge_words(comics)
-    assert words.count("identification not run for live plans") == 2
+    assert not words.count("identification not run for live plans") and "identification not run" not in text_of(comics)
+    assert set(words) == {"Qloo result"}
     assert not set(words) & set(SIZE_WORDS) and not find(comics, "details")
-    assert "Live plans do not identify comics as comedians" in text_of(comics)
+    assert text_of(comics).count(LIVE_COMICS_NOTICE) == 1
+    assert "People whose audiences overlap" not in text_of(comics)
+    assert [text_of(find(li, "span", "who")[0]) for li in find(comics, "li")] == ["Fay Live", "Gus Live"]
+    # the city sections do not repeat the sentence
+    route = section_named(out["plans"][0], "Suggested route")
+    assert "Live plans do not" not in text_of(route) and "Comic to bill with" not in text_of(route)
 
 
 def test_city_preview_is_only_the_venue_count_and_the_limited_data_note(tmp_path, entries):
@@ -445,14 +459,15 @@ def test_buttons_and_city_rows_are_at_least_44px_tall_on_narrow_screens(narrow_r
 
 # ---- milestone 18: the page and docs tell the truth about live mode on the hosted demo -----------------------
 
-CALM = ("Live search is switched off on this demo server because the free host does not have enough CPU for it. "
-        "The pre-built plans above are the demo.")
+CALM = "Live search is switched off on this demo server. The pre-built plans above are the demo."
+ENDED = ("Live search ended on Nov 16, when the hackathon API key was deactivated. "
+         "The pre-built plans above are the demo.")
 
 
 def test_calm_sentence_is_in_the_page_and_uses_the_notice_style_not_the_problem_label():
     start = SCRIPT.index("function liveStatusLine")
     body = SCRIPT[start : SCRIPT.index("function start(", start)]
-    assert CALM in body
+    assert CALM in body and ENDED in body and "free host" not in body
     assert "problem(" not in body and "'problem'" not in body
 
 
@@ -468,11 +483,22 @@ def test_live_disabled_hides_the_form_and_shows_the_calm_notice(tmp_path):
     assert "Live runs left in the current budget: 7." in on["status"]
 
 
+def test_live_ended_shows_its_own_calm_sentence_and_disabled_keeps_the_other(tmp_path):
+    out = run_harness(tmp_path, {"healths": [
+        {"status": "ok", "live_enabled": False, "live_ended": True, "live_budget_remaining": None, "gallery_count": 5},
+        {"status": "ok", "live_enabled": False, "live_ended": False, "live_budget_remaining": None, "gallery_count": 5},
+    ]})
+    ended, disabled = out["live"]
+    assert ended["ledeText"] == ENDED and disabled["ledeText"] == CALM
+    for row in (ended, disabled):
+        assert row["formHidden"] is True and row["ledeClass"] == "notice" and row["status"] == ""
+
+
 def test_docs_state_the_known_limits():
     for rel in ("docs/DEPLOY.md", "docs/API.md", "docs/ARCHITECTURE.md", "CLAUDE.md"):
         text = (ROOT / rel).read_text(encoding="utf-8")
         assert "Known limits" in text, rel
-        for fact in ("133", "47 seconds" if rel.startswith("docs") else "47 s", "ROADIE_LIVE=0", "Nov 16"):
+        for fact in ("133", "47 seconds" if rel.startswith("docs") else "47 s", "ROADIE_LIVE=1", "Nov 16"):
             assert fact in text, (rel, fact)
 
 

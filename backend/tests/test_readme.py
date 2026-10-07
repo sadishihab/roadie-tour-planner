@@ -28,7 +28,7 @@ def test_readme_has_the_expected_sections_and_placeholders():
         assert heading in README, heading
     assert "DEMO_URL_PLACEHOLDER" not in README
     assert "https://roadie-tour-planner.onrender.com" in README
-    assert "Live search is switched off" in README and "docs/DEPLOY.md#known-limits" in README
+    assert "working live search" in README and "docs/DEPLOY.md#known-limits" in README
     assert "SCREENSHOTS_PLACEHOLDER" not in README  # the screenshots are in
     assert "## Screenshots" in README and "invented synthetic data" in README
     for name in ("01-gallery.png", "02-plan.png", "03-city.png"):
@@ -47,3 +47,10 @@ def test_docs_do_not_claim_the_image_was_never_built():
     text = " ".join((ROOT / "docs" / n).read_text(encoding="utf-8") for n in ("DEPLOY.md", "API.md", "ARCHITECTURE.md"))
     assert "not built" not in text and "no Docker daemon" not in text
     assert "133 seconds" in text
+
+
+def test_public_docs_have_no_stale_live_mode_wording():
+    for rel in ("README.md", "docs/DEPLOY.md", "CLAUDE.md"):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        for phrase in ("switched off there", "too slow for the", "unproven below"):
+            assert phrase not in text, (rel, phrase)

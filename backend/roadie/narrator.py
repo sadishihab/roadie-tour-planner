@@ -174,6 +174,12 @@ def _route_tiers(plan: dict[str, Any]) -> dict[str, str]:
     return tiers
 
 
+def _identification_not_run(plan: dict[str, Any]) -> bool:
+    """True when there are comics and none carries a check result (live plans): null is not the same as false."""
+    comics = _comics(plan)
+    return bool(comics) and all(c.get("identified_as_comedian") is None for c in comics)
+
+
 def _identified_comics(plan: dict[str, Any]) -> list[dict[str, Any]]:
     return [c for c in _comics(plan) if c.get("identified_as_comedian") is True and _clean(c.get("name"))]
 
@@ -183,6 +189,7 @@ def _comic_label(comic: dict[str, Any]) -> str:
     return f"{_clean(comic.get('name'))} ({relation})" if relation else _clean(comic.get("name"))
 
 
+NOT_RUN = "Comic identification was not run for this live plan, so no comic is suggested."
 NO_COMEDIANS = "No comedians were identified among the people Qloo shows audience overlap with, so no comic is suggested."
 NO_TERMS = "Capacity, availability and terms are not part of this data."
 
@@ -200,6 +207,7 @@ class TemplateNarrator(Narrator):
         tiers = _route_tiers(plan)
         venues = {_clean(e.get("city")): e for e in _venue_cities(plan)}
         identified = _identified_comics(plan)
+        not_run = _identification_not_run(plan)
         brands = _brands(plan)
 
         # summary: at most 4 sentences
@@ -247,7 +255,7 @@ class TemplateNarrator(Narrator):
                     f"Qloo shows audience overlap with {_comic_label(identified[0])}, a comic to consider billing with."
                 )
             else:
-                sentences.append(NO_COMEDIANS)
+                sentences.append(NOT_RUN if not_run else NO_COMEDIANS)
             sentences.append(NO_TERMS)
             city_pitches.append({"city": city, "text": " ".join(sentences)})
 
@@ -270,7 +278,7 @@ class TemplateNarrator(Narrator):
         if identified:
             pitch.append(f"Comics to consider billing with: {_join([_comic_label(c) for c in identified[:3]])}.")
         else:
-            pitch.append("No comedians were identified to bill with.")
+            pitch.append(NOT_RUN if not_run else "No comedians were identified to bill with.")
         if brands:
             pitch.append(f"Brands with audience overlap worth approaching: {_join(brands[:4])}.")
         pitch.append(NO_TERMS)

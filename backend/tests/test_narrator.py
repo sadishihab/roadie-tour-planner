@@ -488,3 +488,22 @@ def test_the_word_eligible_is_rejected(plan, where):
 
 def test_identified_comedian_term_is_accepted(plan):
     assert verify_narration(plan, "Qloo shows audience overlap with an identified comedian.")[0]
+
+
+def test_null_identification_says_the_check_was_not_run_and_false_keeps_the_old_line(plans):
+    import copy
+    plan = copy.deepcopy(plans[HARLAN])
+    items = plan["comics_to_bill"]["items"]
+    assert items
+    for c in items:
+        c["identified_as_comedian"] = None
+    out = TemplateNarrator().generate(plan)
+    not_run = "Comic identification was not run for this live plan, so no comic is suggested."
+    assert all(not_run in p["text"] for p in out["city_pitches"]) and not_run in out["booking_pitch"]
+    everything = " ".join(p["text"] for p in out["city_pitches"]) + out["booking_pitch"]
+    assert "no comedians were identified" not in everything.lower()
+    for c in items:
+        c["identified_as_comedian"] = False
+    out = TemplateNarrator().generate(plan)
+    assert all("No comedians were identified among the people Qloo shows audience overlap with" in p["text"] for p in out["city_pitches"])
+    assert "not run" not in " ".join(p["text"] for p in out["city_pitches"]) + out["booking_pitch"]

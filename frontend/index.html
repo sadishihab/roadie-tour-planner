@@ -651,18 +651,19 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
       body.appendChild(put(h('p', 'meta'), sourceBadge(obj(limited).source || 'roadie_interpretation'), document.createTextNode(' ' + noteText(limited))));
     }
 
-    // comic to bill with
-    body.appendChild(h('h4', null, 'Comic to bill with'));
+    // comic to bill with (live plans never run the comedian check: the comics section says so once)
     var pick = billPick(plan);
-    if (pick) {
+    if (!pick && live) {
+      // nothing to show here
+    } else if (pick) {
+      body.appendChild(h('h4', null, 'Comic to bill with'));
       var p = h('p');
       put(p, document.createTextNode(str(pick.name) + ' '), sourceBadge('qloo_result'));
       if (relationBadge(pick.relation)) { put(p, document.createTextNode(' '), relationBadge(pick.relation)); }
       body.appendChild(p);
       body.appendChild(h('p', 'meta', 'Identified as a comedian by Roadie\'s text match on a one-line description. Qloo shows audience overlap only.'));
-    } else if (live) {
-      body.appendChild(h('p', 'meta', 'Live plans do not identify comics as comedians, so no comic is suggested here.'));
     } else {
+      body.appendChild(h('h4', null, 'Comic to bill with'));
       body.appendChild(h('p', 'meta', 'No comedians were identified among the people Qloo shows audience overlap with, so no comic is suggested.'));
     }
     body.appendChild(h('p', 'meta', 'Capacity, availability and terms are not part of this data.'));
@@ -702,16 +703,19 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
     var sec = section('Comics to bill with');
     var block = obj(plan.comics_to_bill);
     var items = arr(block.items).map(obj);
-    sec.appendChild(h('p', 'lede', 'People whose audiences overlap with this comedian\'s. Qloo returns people, not necessarily comedians, so each is marked below; only people identified as comedians get a size label.'));
     var yes = items.filter(function (c) { return c.identified_as_comedian === true; });
     var no = items.filter(function (c) { return c.identified_as_comedian === false; });
     var unknown = items.filter(function (c) { return c.identified_as_comedian !== true && c.identified_as_comedian !== false; });
+    var notRun = live && items.length > 0 && unknown.length === items.length;
+    if (!notRun) {
+      sec.appendChild(h('p', 'lede', 'People whose audiences overlap with this comedian\'s. Qloo returns people, not necessarily comedians, so each is marked below; only people identified as comedians get a size label.'));
+    }
     if (items.length === 0) {
       sec.appendChild(h('p', 'meta', 'Qloo returned no people with overlapping audiences.'));
+    } else if (notRun) {
+      sec.appendChild(h('p', 'notice', 'Live plans do not run the comedian check, so no comic is suggested. Each person is listed as returned by Qloo.'));
     } else if (yes.length === 0) {
-      sec.appendChild(h('p', 'notice', live
-        ? 'Live plans do not identify comics as comedians, so Roadie suggests no comic to bill with.'
-        : 'No comedians were identified among the people Qloo shows audience overlap with, so Roadie suggests no comic to bill with.'));
+      sec.appendChild(h('p', 'notice', 'No comedians were identified among the people Qloo shows audience overlap with, so Roadie suggests no comic to bill with.'));
     }
     function personItem(c, withSize) {
       var li = h('li');
@@ -719,12 +723,14 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
       put(top, h('span', 'who', str(c.name)), sourceBadge('qloo_result'));
       if (withSize && relationBadge(c.relation)) { put(top, document.createTextNode(' '), relationBadge(c.relation)); }
       li.appendChild(top);
-      var mark = h('p', 'meta');
-      if (c.identified_as_comedian === true) { put(mark, h('span', 'badge roadie', 'identified as a comedian')); }
-      else if (c.identified_as_comedian === false) { put(mark, h('span', 'badge roadie', 'not identified as a comedian')); }
-      else { put(mark, h('span', 'badge roadie', live ? 'identification not run for live plans' : 'identification not captured')); }
-      put(mark, document.createTextNode(' '), sourceBadge('roadie_interpretation'));
-      li.appendChild(mark);
+      if (!notRun) {
+        var mark = h('p', 'meta');
+        if (c.identified_as_comedian === true) { put(mark, h('span', 'badge roadie', 'identified as a comedian')); }
+        else if (c.identified_as_comedian === false) { put(mark, h('span', 'badge roadie', 'not identified as a comedian')); }
+        else { put(mark, h('span', 'badge roadie', 'identification not captured')); }
+        put(mark, document.createTextNode(' '), sourceBadge('roadie_interpretation'));
+        li.appendChild(mark);
+      }
       if (str(c.description)) { li.appendChild(h('p', 'meta', c.description)); }
       return li;
     }
@@ -930,7 +936,9 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
       el.textContent = '';
       var lede = $('live-lede');
       lede.className = 'notice';
-      lede.textContent = 'Live search is switched off on this demo server because the free host does not have enough CPU for it. The pre-built plans above are the demo.';
+      lede.textContent = health.live_ended === true
+        ? 'Live search ended on Nov 16, when the hackathon API key was deactivated. The pre-built plans above are the demo.'
+        : 'Live search is switched off on this demo server. The pre-built plans above are the demo.';
     } else if (health.live_ready === false && health.live_status === 'unavailable') {
       // The Qloo process could not be started or kept alive: calm notice, the gallery keeps working.
       $('live-form').hidden = true;
@@ -944,7 +952,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 18px 0 40
     } else {
       liveForm(true);
       var left = typeof health.live_budget_remaining === 'number' ? ' Live runs left in the current budget: ' + health.live_budget_remaining + '.' : '';
-      el.textContent = 'A live run takes about one to two minutes, and steps appear as they finish.' + left;
+      el.textContent = 'A live plan usually takes under a minute once the server is awake. After a period of inactivity the server may need up to two minutes to warm up first.' + left;
     }
   }
 

@@ -172,7 +172,7 @@ def test_live_disabled_returns_503_everywhere(tmp_path, method, path, kw, how):
 
 
 def test_health_reports_live_enabled(make):
-    assert make().get("/api/health").json() == {"status": "ok", "live_enabled": True, "live_ready": True, "live_status": "ready", "live_budget_remaining": 15, "gallery_count": 0}
+    assert make().get("/api/health").json() == {"status": "ok", "live_enabled": True, "live_ended": False, "live_ready": True, "live_status": "ready", "live_budget_remaining": 15, "gallery_count": 0}
 
 
 # ----------------------------------------------------------------------- validation
@@ -635,7 +635,7 @@ def test_live_degrades_to_a_clear_message_after_the_key_ends(make, wall):
     assert c.get("/api/health").json()["live_enabled"] is True  # the last day still works
     wall.set(datetime(2026, 11, 17, 0, 1, tzinfo=timezone.utc))
     health = c.get("/api/health").json()
-    assert health == {"status": "ok", "live_enabled": False, "live_ready": False, "live_status": None, "live_budget_remaining": None, "gallery_count": 0}
+    assert health == {"status": "ok", "live_enabled": False, "live_ended": True, "live_ready": False, "live_status": None, "live_budget_remaining": None, "gallery_count": 0}
     for method, path, kw in LIVE_REQUESTS:
         r = getattr(c, method)(path, **kw)
         assert r.status_code == 503 and r.json()["error"] == "live_ended", path
